@@ -1,6 +1,6 @@
-## Puede que falten algunas, creo que estas son las más importantes / las que vamos a usar
+## Pu##ede que falten algunas, creo que estas son las más importantes / las que vamos a usar
 
-# socket | int socket(int domain, int type, int protocol);
+### socket | int socket(int domain, int type, int protocol);
 
 - domain: AF_INET o AF_INET6, el tipo de IP, es decir IPv4 o IPv6
 - type: SOCK_STREAM o SOCK_DGRAM, el tipo de conexión, es decir TCP o UDP
@@ -15,7 +15,7 @@ if (sockfd == -1)
   throw SOCKET_ERR;
 ```
 
-# close | int close(int sockfd);
+### close | int close(int sockfd);
 
 - sockfd: el file descriptor del socket
 - return: 0 o -1
@@ -27,7 +27,7 @@ if (close(sockfd) == -1)
   throw CLOSE_ERR;
 ```
 
-# setsockopt | int setsockopt(int sockfd, int level, int option_name, const void \*option_value, socklen_t option_len);
+### setsockopt | int setsockopt(int sockfd, int level, int option_name, const void \*option_value, socklen_t option_len);
 
 - sockfd: v. `close`
 - level: nivel del protocolo, normalmente SOL_SOCKET
@@ -43,7 +43,7 @@ if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
   throw SOCKET_OPTION_ERR;
 ```
 
-# getsockname | int getsockname(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+### getsockname | int getsockname(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 
 - sockfd: v. `close`
 - addr: puntero a una estructura `sockaddr` con la dirección del socket
@@ -64,7 +64,7 @@ if (getsockname(sockfd, (struct sockaddr *)&addr, &addrlen) == 0) {
 }
 ```
 
-# bind | int bind(int sockfd, const struct sockaddr \*addr, socklen_t addrlen);
+### bind | int bind(int sockfd, const struct sockaddr \*addr, socklen_t addrlen);
 
 - sockfd: v. `close`
 - addr: puntero a la estructura `sockaddr` con la IP y el puerto a conectar
@@ -84,7 +84,7 @@ if (bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1) {
 }
 ```
 
-# connect | int connect(int sockfd, const struct sockaddr \*addr, socklen_t addrlen);
+### connect | int connect(int sockfd, const struct sockaddr \*addr, socklen_t addrlen);
 
 - sockfd: v. `close`
 - addr: v. `bind`
@@ -103,7 +103,7 @@ if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
 }
 ```
 
-# listen | int listen(int sockfd, int backlog);
+### listen | int listen(int sockfd, int backlog);
 
 - sockfd: v. `close`
 - backlog: número de conexiones pendientes máximas
@@ -119,6 +119,6 @@ if (listen(sockfd, 10) == -1) {  // Allow a maximum of 10 pending connections
 
 # WIP
 
-# accept | int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+### accept | int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 
-# htons | uint16_t htons(uint16_t hostshort);
+### htons | uint16_t htons(uint16_t hostshort);
