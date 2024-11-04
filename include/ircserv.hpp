@@ -17,6 +17,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <poll.h>
+#include <arpa/inet.h>
 
 void ft_print(std::string str);
 void print_err(std::string errorMessage);
