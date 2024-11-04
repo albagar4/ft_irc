@@ -19,5 +19,6 @@
 #include <poll.h>
 
 void ft_print(std::string str);
+void print_err(std::string errorMessage);
 
 #endif

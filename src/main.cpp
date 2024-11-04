@@ -2,10 +2,8 @@
 #include <Server.hpp>
 
 int main(int argc, char **argv) {
-  if (argc != 3) {
-    ft_print("Incorrect nbr of parameters");
-    ft_print("Usage: ./ircserv <port> <password>");
-  }
+  if (argc != 3)
+    print_err("Incorrect nbr of parameters\nUsage: ./ircserv <port> <password>");
   else {
     Server server(argv[1], argv[2]);
 
