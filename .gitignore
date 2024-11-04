@@ -1,4 +1,5 @@
 .vscode
-obj/*
+obj/
 ircserv
-
+.clangd
+.clang-format
