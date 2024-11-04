@@ -1,31 +1,32 @@
 #ifndef SERVER_HPP
-# define SERVER_HPP
+#define SERVER_HPP
 
-#include <ircserv.hpp>
 #include <Client.hpp>
+#include <ircserv.hpp>
 
 class Server {
-private:
-	Server() {};
-  void createServerSocket(void);
-	std::string password;
-	int port;
-	int serverSocket;
-	sockaddr_in serverAddress;
-  std::vector<Client> clients;
-  std::vector<struct pollfd> fds;
-public:
-	Server(std::string port, std::string password);
-	~Server();
+   private:
+    Server() {};
+    void createServerSocket(void);
+    std::string password;
+    int port;
+    int serverSocket;
+    sockaddr_in serverAddress;
+    std::vector<Client> clients;
+    std::vector<struct pollfd> fds;
 
-  // Getters
-	int getServerSocket(void);
-	// Setters
+   public:
+    Server(std::string port, std::string password);
+    ~Server();
 
-  int checkConnections(void);
-  int iterateFds(void);
-  void newConnection();
-//   void manageUpdates();
+    // Getters
+    int getServerSocket(void);
+    // Setters
+
+    int checkConnections(void);
+    int iterateFds(void);
+    void newConnection();
+    //   void manageUpdates();
 };
 
 #endif
