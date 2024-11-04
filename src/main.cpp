@@ -11,10 +11,9 @@ int main(int argc, char **argv) {
       if (server.checkConnections() > 0) {
         int clientSocket = accept(server.getServerSocket(), 0, 0);
         char buffer[1024] = { 0 };
-        if (recv(clientSocket, buffer, sizeof(buffer), 0)) {
-          ft_print("Message from client: ");
-          ft_print(buffer);
-      }
+        recv(clientSocket, buffer, sizeof(buffer), 0);
+        ft_print("Message from client: ");
+        ft_print(buffer);
       }
       // poll
       // checkeamos clientes y mensaje

@@ -1,19 +1,6 @@
 #include <Server.hpp>
 
-Server::Server(std::string port, std::string password): password(password) {
-	ft_print("IRC CONSTRUCTOR CALLED");
-
-  // Solo puertos numéricos
-  if (port.find_first_not_of("0123456789") != std::string::npos)
-    print_err("Port number is invalid");
-	this->port = atoi(port.c_str());
-
-  // Solo contraseñas alfanuméricas
-	for (unsigned long int i = 0; i < password.size(); i++) {
-		if (!isalnum(password[i]))
-		  print_err("Password only accepts alphanumeric characters");
-	}
-
+void Server::createServerSocket() {
   // Crear el socket del servidor
 	this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
   if (this->serverSocket == -1)
@@ -39,16 +26,46 @@ Server::Server(std::string port, std::string password): password(password) {
   // Permite que el servidor escuche conexiones
   if (listen(serverSocket, 5) == -1)
     print_err("Unable to listen server socket");
+
+  struct pollfd newPoll;
+
+  newPoll.fd = this->serverSocket;
+  newPoll.events = POLLIN;
+  newPoll.revents = 0;
+  fds.push_back(newPoll);
+}
+
+static int parsePort(std::string port) {
+  if (port.find_first_not_of("0123456789") != std::string::npos)
+    print_err("Port number is invalid");
+	return (atoi(port.c_str()));
+}
+
+static std::string parsePassword(std::string password) {
+	for (unsigned long int i = 0; i < password.size(); i++) {
+		if (!isalnum(password[i]))
+		  print_err("Password only accepts alphanumeric characters");
+	}
+  return (password);
+}
+
+Server::Server(std::string port, std::string password) {
+	ft_print("IRC CONSTRUCTOR CALLED");
+ 
+  this->port = parsePort(port);
+  this->password = parsePassword(password);
+  
+  createServerSocket();
 }
 
 Server::~Server() { close(this->serverSocket); }
 
-int &Server::getServerSocket(void) {
+int Server::getServerSocket(void) {
 	return (this->serverSocket);
 }
 
 int Server::checkConnections(void) {
-	int result = poll(this->fds, 512, 0);
+	int result = poll(&this->fds[0], fds.size(), 0);
 	if (result == -1)
     print_err("Error while trying to poll()");
 	return (result);
