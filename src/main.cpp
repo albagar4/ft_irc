@@ -9,15 +9,10 @@ int main(int argc, char **argv) {
 
     while (true) {
       if (server.checkConnections() > 0) {
-        int clientSocket = accept(server.getServerSocket(), 0, 0);
-        char buffer[1024] = { 0 };
-        recv(clientSocket, buffer, sizeof(buffer), 0);
-        ft_print("Message from client: ");
-        ft_print(buffer);
+        server.iterateFds();
+        // parseResponse(int i)
+        // executeResponse(int i)
       }
-      // poll
-      // checkeamos clientes y mensaje
-      // ejecutamos comando (?)
     }
   }
   return 0;

@@ -27,12 +27,12 @@ void Server::createServerSocket() {
   if (listen(serverSocket, 5) == -1)
     print_err("Unable to listen server socket");
 
-  struct pollfd newPoll;
+	struct pollfd newPoll;
 
-  newPoll.fd = this->serverSocket;
-  newPoll.events = POLLIN;
-  newPoll.revents = 0;
-  fds.push_back(newPoll);
+	newPoll.fd = this->serverSocket;
+	newPoll.events = POLLIN;
+	newPoll.revents = 0;
+	fds.push_back(newPoll);
 }
 
 static int parsePort(std::string port) {
@@ -67,6 +67,44 @@ int Server::getServerSocket(void) {
 int Server::checkConnections(void) {
 	int result = poll(&this->fds[0], fds.size(), 0);
 	if (result == -1)
-    print_err("Error while trying to poll()");
+    	print_err("Error while trying to poll()");
 	return (result);
+}
+
+int Server::iterateFds(void) {
+	unsigned long int i = 0;
+
+	for (; i < this->fds.size(); i++) {
+		// Miramos si hay respuesta y esa respuesta es POLLIN (leer como suena c=3)
+		if (fds[i].revents & POLLIN) {
+			if (fds[i].fd == this->serverSocket)
+				this->newConnection();
+			//else
+			// 	this->manageUpdates();
+		}
+	}
+	return (i);
+}
+
+void Server::newConnection() {
+	sockaddr_in address;
+	socklen_t	length = sizeof(address);
+
+	int clientSocket = accept(this->getServerSocket(), (sockaddr *)&address, &length);
+	if (clientSocket == -1)
+		exit(1);
+	if (fcntl(clientSocket, F_SETFL, O_NONBLOCK) == -1)
+		exit(1);
+
+	Client client(clientSocket, inet_ntoa(address.sin_addr));
+	this->clients.push_back(client);
+
+	pollfd poll;
+	poll.fd = clientSocket;
+	poll.events = POLLIN;
+	poll.revents = 0;
+	this->fds.push_back(poll);
+	
+	this->manageUpdates();
+	std::cout << "Client connected in socket: " << clientSocket << std::endl;
 }

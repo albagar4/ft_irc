@@ -9,6 +9,7 @@ private:
   std::string address;
 public:
   Client();
+  Client(int fd, std::string address);
   ~Client();
   int getFd();
   std::string getAddress();

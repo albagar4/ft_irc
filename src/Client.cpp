@@ -1,5 +1,10 @@
 #include <Client.hpp>
 
+Client::Client(int fd, std::string address) {
+	this->fd = fd;
+	this->address = address;
+}
+
 Client::Client(){}
 Client::~Client(){}
 

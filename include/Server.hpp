@@ -23,6 +23,9 @@ public:
 	// Setters
 
   int checkConnections(void);
+  int iterateFds(void);
+  void newConnection();
+//   void manageUpdates();
 };
 
 #endif
