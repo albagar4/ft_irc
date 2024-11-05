@@ -134,10 +134,7 @@ void Server::manageUpdates(Client& client) {
 
     ssize_t bytes = recv(client.getFd(), buffer, sizeof(buffer) - 1, 0);
     if (bytes == -1) print_err("recv has failed");
-
-    if (bytes == 0)
-        ;  // desconexion
-
+    if (bytes == 0) this->disconnectClient(client);
     if (bytes > 0) this->parseCommands(buffer, client);
 }
 
@@ -165,6 +162,21 @@ void Server::parseCommands(char* buffer, Client& client) {
             }
         }
         // mensaje con la lista de usos y comandos disponibles
+    }
+}
+
+void Server::disconnectClient(Client& client) {
+    int temp = client.getFd();
+    for (std::vector<pollfd>::iterator it = this->fds.begin();
+         it != this->fds.end(); it++) {
+        if (temp == it->fd) {
+            this->fds.erase(it);
+            this->map.erase(temp);
+            close(temp);
+            std::cout << "Client in socket " << temp << " was disconnected"
+                      << std::endl;
+            break;
+        }
     }
 }
 
