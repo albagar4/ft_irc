@@ -53,18 +53,22 @@
 #include <ircserv.hpp>
 
 class Server {
-   private:
+private:
+    typedef void (Server::*authFunctions)(std::string, Client &);
+    typedef void (Server::*cmdFunctions)(std::string, Client &);
+    authFunctions authFunctions[4];
+    cmdFunctions  cmdFunctions[8];
+
     Server() {};
     void createServerSocket(void);
     std::string password;
     int port;
     int serverSocket;
     sockaddr_in serverAddress;
-    // std::vector<Client> clients;
     std::vector<struct pollfd> fds;
     std::map<int, Client> map;
 
-   public:
+public:
     Server(std::string port, std::string password);
     ~Server();
 
@@ -72,8 +76,11 @@ class Server {
     int getServerSocket(void) const;
     std::string getPassword() const;
     int getPort() const;
-    std::vector<Client> getClients() const;
+    std::map<int, Client> getMap(void) const;
+
     // Setters
+    void setAuthFunctions(void);
+    void setCmdFunctions(void);
 
     int checkConnections(void);
     int iterateFds(void);
@@ -82,12 +89,18 @@ class Server {
     void parseCommands(char *buffer, Client &client);
 
     // Commands
-    void parseCap(char *buffer, Client &client);
-    void parsePass(char *buffer, Client &client);
-    void parseNick(char *buffer, Client &client);
-    void parseUser(char *buffer, Client &client);
-    // void parseCap(char *buffer, Client &client);
-    // void parseCap(char *buffer, Client &client);
+    void parseCap(std::string buffer, Client &client);
+    void parsePass(std::string buffer, Client &client);
+    void parseNick(std::string buffer, Client &client);
+    void parseUser(std::string buffer, Client &client);
+    void parseJoin(std::string buffer, Client &client);
+    void parsePart(std::string buffer, Client &client);
+    void parseKick(std::string buffer, Client &client);
+    void parseInvite(std::string buffer, Client &client);
+    void parseTopic(std::string buffer, Client &client);
+    void parseMode(std::string buffer, Client &client);
+    void parsePrivMsg(std::string buffer, Client &client);
+    void parseQuit(std::string buffer, Client &client);
 };
 
 std::ostream& operator<<(std::ostream& os, const Server& server);
