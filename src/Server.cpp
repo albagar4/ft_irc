@@ -64,21 +64,21 @@ Server::Server(std::string port, std::string password) {
 Server::~Server() { close(this->serverSocket); }
 
 void Server::setAuthFunctions(void) {
-    this->authFunctions[0] = &Server::parseCap;
-    this->authFunctions[1] = &Server::parsePass;
-    this->authFunctions[2] = &Server::parseNick;
-    this->authFunctions[3] = &Server::parseUser;
+    this->authentification[0] = &Server::parseCap;
+    this->authentification[1] = &Server::parsePass;
+    this->authentification[2] = &Server::parseNick;
+    this->authentification[3] = &Server::parseUser;
 }
 
 void Server::setCmdFunctions(void) {
-    this->cmdFunctions[0] = &Server::parseJoin;
-    this->cmdFunctions[1] = &Server::parsePart;
-    this->cmdFunctions[2] = &Server::parseKick;
-    this->cmdFunctions[3] = &Server::parseInvite;
-    this->cmdFunctions[4] = &Server::parseTopic;
-    this->cmdFunctions[5] = &Server::parseMode;
-    this->cmdFunctions[6] = &Server::parsePrivMsg;
-    this->cmdFunctions[7] = &Server::parseQuit;
+    this->commands[0] = &Server::parseJoin;
+    this->commands[1] = &Server::parsePart;
+    this->commands[2] = &Server::parseKick;
+    this->commands[3] = &Server::parseInvite;
+    this->commands[4] = &Server::parseTopic;
+    this->commands[5] = &Server::parseMode;
+    this->commands[6] = &Server::parsePrivMsg;
+    this->commands[7] = &Server::parseQuit;
 }
 
 int Server::getServerSocket(void) const { return (this->serverSocket); }
@@ -101,7 +101,7 @@ int Server::iterateFds(void) {
             if (fds[i].fd == this->serverSocket)
                 this->newConnection();
             else
-             	this->manageUpdates(this->map[fds[i].fd]);
+                this->manageUpdates(this->map[fds[i].fd]);
         }
     }
     return (i);
@@ -128,41 +128,40 @@ void Server::newConnection() {
     std::cout << client << std::endl;
 }
 
-void Server::manageUpdates(Client &client) {
+void Server::manageUpdates(Client& client) {
     char buffer[1024];
     memset(buffer, 0, sizeof(buffer));
 
     ssize_t bytes = recv(client.getFd(), buffer, sizeof(buffer) - 1, 0);
-    if (bytes == -1)
-        print_err("recv has failed");
-    
-    if (bytes == 0)
-        // desconexion
+    if (bytes == -1) print_err("recv has failed");
 
-    if (bytes > 0)
-        this->parseCommands(buffer, client);
+    if (bytes == 0)
+        ;  // desconexion
+
+    if (bytes > 0) this->parseCommands(buffer, client);
 }
 
-void Server::parseCommands(char *buffer, Client &client) {
+void Server::parseCommands(char* buffer, Client& client) {
     std::string buff(buffer);
-    std::string title = buff.substr(0, buff.find(" ") - 1);
-
+    std::string title = buff.substr(0, buff.find(" "));
     if (client.getAuth() == false) {
         std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
         for (int i = 0; i < 4; i++) {
             if (title == commandArray[i]) {
-                (this->*authFunctions[i])(buff.substr(buff.find(" ") + 1).c_str(), client);
-                return ;
+                (this->*authentification[i])(
+                    buff.substr(buff.find(" ") + 1).c_str(), client);
+                return;
             }
         }
         // enviar mensaje de no autentificacion con pasos a seguir
-    }
-    else {
-        std::string commandArray[8] = {"JOIN", "PART", "KICK", "INVITE", "TOPIC", "MODE", "PRIVMSG", "QUIT"};
+    } else {
+        std::string commandArray[8] = {"JOIN",  "PART", "KICK",    "INVITE",
+                                       "TOPIC", "MODE", "PRIVMSG", "QUIT"};
         for (int i = 0; i < 4; i++) {
             if (title == commandArray[i]) {
-                (this->*cmdFunctions[i])(buff.substr(buff.find(" ") + 1).c_str(), client);
-                return ;
+                (this->*commands[i])(buff.substr(buff.find(" ") + 1).c_str(),
+                                     client);
+                return;
             }
         }
         // mensaje con la lista de usos y comandos disponibles
