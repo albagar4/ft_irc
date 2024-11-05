@@ -51,8 +51,8 @@ static std::string parsePassword(std::string password) {
 }
 
 Server::Server(std::string port, std::string password) {
+    ft_print(ASCII_ART);
     ft_print("IRC CONSTRUCTOR CALLED");
-
     this->port = parsePort(port);
     this->password = parsePassword(password);
 
