@@ -60,8 +60,9 @@ class Server {
     int port;
     int serverSocket;
     sockaddr_in serverAddress;
-    std::vector<Client> clients;
+    // std::vector<Client> clients;
     std::vector<struct pollfd> fds;
+    std::map<int, Client> map;
 
    public:
     Server(std::string port, std::string password);
@@ -77,7 +78,16 @@ class Server {
     int checkConnections(void);
     int iterateFds(void);
     void newConnection();
-    //   void manageUpdates();
+    void manageUpdates(Client &client);
+    void parseCommands(char *buffer, Client &client);
+
+    // Commands
+    void parseCap(char *buffer, Client &client);
+    void parsePass(char *buffer, Client &client);
+    void parseNick(char *buffer, Client &client);
+    void parseUser(char *buffer, Client &client);
+    // void parseCap(char *buffer, Client &client);
+    // void parseCap(char *buffer, Client &client);
 };
 
 std::ostream& operator<<(std::ostream& os, const Server& server);

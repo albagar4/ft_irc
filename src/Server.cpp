@@ -76,12 +76,12 @@ int Server::iterateFds(void) {
     unsigned long int i = 0;
 
     for (; i < this->fds.size(); i++) {
-        // Miramos si hay respuesta y esa respuesta es POLLIN (leer como suena
-        // c=3)
+        // Miramos si hay respuesta y esa respuesta es POLLIN
         if (fds[i].revents & POLLIN) {
-            if (fds[i].fd == this->serverSocket) this->newConnection();
-            // else
-            //  	this->manageUpdates();
+            if (fds[i].fd == this->serverSocket)
+                this->newConnection();
+            else
+             	this->manageUpdates(this->map[fds[i].fd]);
         }
     }
     return (i);
@@ -97,7 +97,7 @@ void Server::newConnection() {
     if (fcntl(clientSocket, F_SETFL, O_NONBLOCK) == -1) exit(1);
 
     Client client(clientSocket, inet_ntoa(address.sin_addr));
-    this->clients.push_back(client);
+    this->map[clientSocket] = client;
 
     pollfd poll;
     poll.fd = clientSocket;
@@ -105,8 +105,36 @@ void Server::newConnection() {
     poll.revents = 0;
     this->fds.push_back(poll);
 
-    // this->manageUpdates();
     std::cout << client << std::endl;
+}
+
+void Server::manageUpdates(Client &client) {
+    char buffer[1024];
+    memset(buffer, 0, sizeof(buffer));
+
+    ssize_t bytes = recv(client.getFd(), buffer, sizeof(buffer) - 1, 0);
+    if (bytes == -1)
+        print_err("recv has failed");
+    
+    if (bytes == 0)
+        // desconexion
+
+    if (bytes > 0)
+        this->parseCommands(buffer, client);
+}
+
+void Server::parseCommands(char *buffer, Client &client) {
+    if (client.getAuth() == false) {
+        // CAP
+        // PASS
+        // NICK 
+        // USER
+        // enviar mensaje de no autentificacion con pasos a seguir
+    }
+    else {
+        // JOIN 
+        // TPM
+    }
 }
 
 std::ostream& operator<<(std::ostream& os, const Server& server) {
