@@ -144,12 +144,15 @@ void Server::manageUpdates(Client& client) {
 void Server::parseCommands(char* buffer, Client& client) {
     std::string buff(buffer);
     std::string title = buff.substr(0, buff.find(" "));
+
+    if (!buff.empty() && buff[buff.size() - 1] == '\n')
+        buff.erase(buff.size() - 1);
+        
     if (client.getAuth() == false) {
         std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
         for (int i = 0; i < 4; i++) {
             if (title == commandArray[i]) {
-                (this->*authentification[i])(
-                    buff.substr(buff.find(" ") + 1).c_str(), client);
+                (this->*authentification[i])(buff.substr(buff.find(" ") + 1).c_str(), client);
                 return;
             }
         }
@@ -159,8 +162,7 @@ void Server::parseCommands(char* buffer, Client& client) {
                                        "TOPIC", "MODE", "PRIVMSG", "QUIT"};
         for (int i = 0; i < 4; i++) {
             if (title == commandArray[i]) {
-                (this->*commands[i])(buff.substr(buff.find(" ") + 1).c_str(),
-                                     client);
+                (this->*commands[i])(buff.substr(buff.find(" ") + 1).c_str(), client);
                 return;
             }
         }

@@ -13,6 +13,10 @@
 #include <Client.hpp>
 #include <ircserv.hpp>
 
+enum {
+    
+};
+
 class Server {
    private:
     typedef void (Server::*authFunctions)(std::string, Client &);
