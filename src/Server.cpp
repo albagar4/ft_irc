@@ -56,15 +56,35 @@ Server::Server(std::string port, std::string password) {
     this->port = parsePort(port);
     this->password = parsePassword(password);
 
+    this->setAuthFunctions();
+    this->setCmdFunctions();
     createServerSocket();
 }
 
 Server::~Server() { close(this->serverSocket); }
 
+void Server::setAuthFunctions(void) {
+    this->authFunctions[0] = &Server::parseCap;
+    this->authFunctions[1] = &Server::parsePass;
+    this->authFunctions[2] = &Server::parseNick;
+    this->authFunctions[3] = &Server::parseUser;
+}
+
+void Server::setCmdFunctions(void) {
+    this->cmdFunctions[0] = &Server::parseJoin;
+    this->cmdFunctions[1] = &Server::parsePart;
+    this->cmdFunctions[2] = &Server::parseKick;
+    this->cmdFunctions[3] = &Server::parseInvite;
+    this->cmdFunctions[4] = &Server::parseTopic;
+    this->cmdFunctions[5] = &Server::parseMode;
+    this->cmdFunctions[6] = &Server::parsePrivMsg;
+    this->cmdFunctions[7] = &Server::parseQuit;
+}
+
 int Server::getServerSocket(void) const { return (this->serverSocket); }
 int Server::getPort(void) const { return (this->port); }
 std::string Server::getPassword(void) const { return (this->password); }
-std::vector<Client> Server::getClients(void) const { return (this->clients); }
+std::map<int, Client> Server::getMap(void) const { return (this->map); }
 
 int Server::checkConnections(void) {
     int result = poll(&this->fds[0], fds.size(), 0);
@@ -124,16 +144,28 @@ void Server::manageUpdates(Client &client) {
 }
 
 void Server::parseCommands(char *buffer, Client &client) {
+    std::string buff(buffer);
+    std::string title = buff.substr(0, buff.find(" ") - 1);
+
     if (client.getAuth() == false) {
-        // CAP
-        // PASS
-        // NICK 
-        // USER
+        std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
+        for (int i = 0; i < 4; i++) {
+            if (title == commandArray[i]) {
+                (this->*authFunctions[i])(buff.substr(buff.find(" ") + 1).c_str(), client);
+                return ;
+            }
+        }
         // enviar mensaje de no autentificacion con pasos a seguir
     }
     else {
-        // JOIN 
-        // TPM
+        std::string commandArray[8] = {"JOIN", "PART", "KICK", "INVITE", "TOPIC", "MODE", "PRIVMSG", "QUIT"};
+        for (int i = 0; i < 4; i++) {
+            if (title == commandArray[i]) {
+                (this->*cmdFunctions[i])(buff.substr(buff.find(" ") + 1).c_str(), client);
+                return ;
+            }
+        }
+        // mensaje con la lista de usos y comandos disponibles
     }
 }
 
@@ -142,6 +174,6 @@ std::ostream& operator<<(std::ostream& os, const Server& server) {
     os << "\nPassword: " << server.getPassword();
     os << "\nPort: " << server.getPort();
     os << "\nSocket: " << server.getServerSocket();
-    os << "\nCurrent amount of clients: " << server.getClients().size();
+    os << "\nCurrent amount of clients: " << server.getMap().size();
     return (os);
 }
