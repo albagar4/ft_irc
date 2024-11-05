@@ -20,7 +20,10 @@ class Server {
     ~Server();
 
     // Getters
-    int getServerSocket(void);
+    int getServerSocket(void) const;
+    std::string getPassword() const;
+    int getPort() const;
+    std::vector<Client> getClients() const;
     // Setters
 
     int checkConnections(void);
@@ -29,4 +32,5 @@ class Server {
     //   void manageUpdates();
 };
 
+std::ostream& operator<<(std::ostream& os, const Server& server);
 #endif

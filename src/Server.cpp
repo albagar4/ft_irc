@@ -20,7 +20,7 @@ void Server::createServerSocket() {
         print_err("Unable to set server socket as non blocking");
 
     // Vincula el fd del servidor a una dirección
-    if (bind(this->serverSocket, (struct sockaddr *)&serverAddress,
+    if (bind(this->serverSocket, (struct sockaddr*)&serverAddress,
              sizeof(serverAddress)))
         print_err("Unable to bind server socket");
 
@@ -61,7 +61,10 @@ Server::Server(std::string port, std::string password) {
 
 Server::~Server() { close(this->serverSocket); }
 
-int Server::getServerSocket(void) { return (this->serverSocket); }
+int Server::getServerSocket(void) const { return (this->serverSocket); }
+int Server::getPort(void) const { return (this->port); }
+std::string Server::getPassword(void) const { return (this->password); }
+std::vector<Client> Server::getClients(void) const { return (this->clients); }
 
 int Server::checkConnections(void) {
     int result = poll(&this->fds[0], fds.size(), 0);
@@ -89,7 +92,7 @@ void Server::newConnection() {
     socklen_t length = sizeof(address);
 
     int clientSocket =
-        accept(this->getServerSocket(), (sockaddr *)&address, &length);
+        accept(this->getServerSocket(), (sockaddr*)&address, &length);
     if (clientSocket == -1) exit(1);
     if (fcntl(clientSocket, F_SETFL, O_NONBLOCK) == -1) exit(1);
 
@@ -103,5 +106,14 @@ void Server::newConnection() {
     this->fds.push_back(poll);
 
     // this->manageUpdates();
-    std::cout << "Client connected in socket: " << clientSocket << std::endl;
+    std::cout << client << std::endl;
+}
+
+std::ostream& operator<<(std::ostream& os, const Server& server) {
+    os << "* Server information *";
+    os << "\nPassword: " << server.getPassword();
+    os << "\nPort: " << server.getPort();
+    os << "\nSocket: " << server.getServerSocket();
+    os << "\nCurrent amount of clients: " << server.getClients().size();
+    return (os);
 }

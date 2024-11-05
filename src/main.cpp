@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
             "Incorrect nbr of parameters\nUsage: ./ircserv <port> <password>");
     else {
         Server server(argv[1], argv[2]);
-
+        std::cout << server << std::endl;
         while (true) {
             if (server.checkConnections() > 0) {
                 server.iterateFds();

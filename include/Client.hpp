@@ -12,10 +12,12 @@ class Client {
     Client();
     Client(int fd, std::string address);
     ~Client();
-    int getFd();
-    std::string getAddress();
+    int getFd() const;
+    std::string getAddress() const;
     void setFd(int fd);
     void setAddress(std::string address);
 };
+
+std::ostream& operator<<(std::ostream& os, const Client& client);
 
 #endif
