@@ -1,5 +1,7 @@
 #include <Server.hpp>
 
+#include "ircserv.hpp"
+
 void Server::createServerSocket() {
     // Crear el socket del servidor
     this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -51,11 +53,9 @@ static std::string parsePassword(std::string password) {
 }
 
 Server::Server(std::string port, std::string password) {
-    ft_print(ASCII_ART);
-    ft_print("IRC CONSTRUCTOR CALLED");
+    ft_print(ASCII_ART, MAGENTA);
     this->port = parsePort(port);
     this->password = parsePassword(password);
-
     this->setAuthFunctions();
     this->setCmdFunctions();
     createServerSocket();
@@ -125,7 +125,7 @@ void Server::newConnection() {
     poll.revents = 0;
     this->fds.push_back(poll);
 
-    std::cout << client << std::endl;
+    printConnected(client);
 }
 
 void Server::manageUpdates(Client& client) {
@@ -134,10 +134,7 @@ void Server::manageUpdates(Client& client) {
 
     ssize_t bytes = recv(client.getFd(), buffer, sizeof(buffer) - 1, 0);
     if (bytes == -1) print_err("recv has failed");
-
-    if (bytes == 0)
-        ;  // desconexion
-
+    if (bytes == 0) this->disconnectClient(client);
     if (bytes > 0) this->parseCommands(buffer, client);
 }
 
@@ -167,6 +164,20 @@ void Server::parseCommands(char* buffer, Client& client) {
             }
         }
         // mensaje con la lista de usos y comandos disponibles
+    }
+}
+
+void Server::disconnectClient(Client& client) {
+    Client temp = client;
+    for (std::vector<pollfd>::iterator it = this->fds.begin();
+         it != this->fds.end(); it++) {
+        if (temp.getFd() == it->fd) {
+            this->fds.erase(it);
+            this->map.erase(temp.getFd());
+            close(temp.getFd());
+            printDisconnected(temp);
+            break;
+        }
     }
 }
 

@@ -52,7 +52,7 @@ class Server {
     void newConnection();
     void manageUpdates(Client &client);
     void parseCommands(char *buffer, Client &client);
-
+    void disconnectClient(Client &client);
     // Commands
     void parseCap(std::string buffer, Client &client);
     void parsePass(std::string buffer, Client &client);
