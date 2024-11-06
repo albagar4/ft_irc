@@ -3,6 +3,7 @@
 
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <poll.h>
 #include <stdint.h>
@@ -17,6 +18,7 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -39,5 +41,6 @@ void printHelp();
 void printConnected(Client client);
 void printDisconnected(Client client);
 void printCloseServer();
+std::vector<std::string> split(std::string input, char delimiter);
 
 #endif

@@ -8,8 +8,7 @@ void Server::createServerSocket() {
     if (this->serverSocket == -1) print_err("Unable to create server socket");
 
     int optval = 1;
-    if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR, &optval,
-                   sizeof(optval)) == -1)
+    if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1)
         print_err("Unable to set options to server socket");
 
     // Especificaciones de la dirección
@@ -22,13 +21,11 @@ void Server::createServerSocket() {
         print_err("Unable to set server socket as non blocking");
 
     // Vincula el fd del servidor a una dirección
-    if (bind(this->serverSocket, (struct sockaddr*)&serverAddress,
-             sizeof(serverAddress)))
+    if (bind(this->serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)))
         print_err("Unable to bind server socket");
 
     // Permite que el servidor escuche conexiones
-    if (listen(serverSocket, 5) == -1)
-        print_err("Unable to listen server socket");
+    if (listen(serverSocket, 5) == -1) print_err("Unable to listen server socket");
 
     struct pollfd newPoll;
 
@@ -46,19 +43,18 @@ static int parsePort(std::string port) {
 
 static std::string parsePassword(std::string password) {
     for (unsigned long int i = 0; i < password.size(); i++) {
-        if (!isalnum(password[i]))
-            print_err("Password only accepts alphanumeric characters");
+        if (!isalnum(password[i])) print_err("Password only accepts alphanumeric characters");
     }
     return (password);
 }
 
 Server::Server(std::string port, std::string password) {
-    ft_print(ASCII_ART, MAGENTA);
     this->port = parsePort(port);
     this->password = parsePassword(password);
     this->setAuthFunctions();
     this->setCmdFunctions();
     createServerSocket();
+    ft_print(ASCII_ART, MAGENTA);
 }
 
 Server::~Server() { close(this->serverSocket); }
@@ -111,12 +107,11 @@ void Server::newConnection() {
     sockaddr_in address;
     socklen_t length = sizeof(address);
 
-    int clientSocket =
-        accept(this->getServerSocket(), (sockaddr*)&address, &length);
+    int clientSocket = accept(this->getServerSocket(), (sockaddr*)&address, &length);
     if (clientSocket == -1) exit(1);
     if (fcntl(clientSocket, F_SETFL, O_NONBLOCK) == -1) exit(1);
 
-    Client client(clientSocket, inet_ntoa(address.sin_addr));
+    Client client(clientSocket, address);
     this->map[clientSocket] = client;
 
     pollfd poll;
@@ -142,10 +137,15 @@ void Server::parseCommands(char* buffer, Client& client) {
     std::string buff(buffer);
     std::string title = buff.substr(0, buff.find(" "));
 
-    if (!buff.empty() && buff[buff.size() - 1] == '\n')
+    if (!buff.empty() && buff[buff.size() - 1] == '\n') {
         buff.erase(buff.size() - 1);
-        
-    if (client.getAuth() == false) {
+    }
+    if (!buff.empty() && buff[buff.size() - 1] == '\r') {
+        buff.erase(buff.size() - 1);
+    }
+
+    // FORZANDO AUTENTIFICACION PARA HACER EL JOIN
+    if (client.getAuth() == true) {
         std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
         for (int i = 0; i < 4; i++) {
             if (title == commandArray[i]) {
@@ -157,7 +157,7 @@ void Server::parseCommands(char* buffer, Client& client) {
     } else {
         std::string commandArray[8] = {"JOIN",  "PART", "KICK",    "INVITE",
                                        "TOPIC", "MODE", "PRIVMSG", "QUIT"};
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 8; i++) {
             if (title == commandArray[i]) {
                 (this->*commands[i])(buff.substr(buff.find(" ") + 1).c_str(), client);
                 return;
@@ -169,8 +169,7 @@ void Server::parseCommands(char* buffer, Client& client) {
 
 void Server::disconnectClient(Client& client) {
     Client temp = client;
-    for (std::vector<pollfd>::iterator it = this->fds.begin();
-         it != this->fds.end(); it++) {
+    for (std::vector<pollfd>::iterator it = this->fds.begin(); it != this->fds.end(); it++) {
         if (temp.getFd() == it->fd) {
             this->fds.erase(it);
             this->map.erase(temp.getFd());
@@ -188,4 +187,28 @@ std::ostream& operator<<(std::ostream& os, const Server& server) {
     os << "\nSocket: " << server.getServerSocket();
     os << "\nCurrent amount of clients: " << server.getMap().size();
     return (os);
+}
+
+void Server::printChannels() {
+    ft_print("The current channels are:");
+    for (size_t i = 0; i < this->channels.size(); i++) {
+        std::cout << this->channels[i].getName();
+        std::cout << " :" << this->channels[i].getTopic();
+        std::cout << " (";
+        this->channels[i].printClients();
+        std::cout << ")" << std::endl;
+    }
+}
+bool Server::isNewChannel(std::string name) {
+    for (size_t i = 0; i < this->channels.size(); i++) {
+        if (this->channels[i].getName() == name) return false;
+    }
+    return true;
+}
+
+Channel* Server::findChannel(std::string name) {
+    for (size_t i = 0; i < this->channels.size(); i++) {
+        if (this->channels[i].getName() == name) return &this->channels[i];
+    }
+    return NULL;
 }

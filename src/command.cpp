@@ -9,19 +9,17 @@ void Server::parseCap(std::string buffer, Client &client) {
 };
 
 void Server::parsePass(std::string buffer, Client &client) {
-	ssize_t bytes_send;
-	std::string msg;
+    ssize_t bytes_send;
+    std::string msg;
 
-	if (this->getPassword() == buffer) {
-		msg = "The password provide was correct\n";
-		client.setPassword(true);
-	}
-	else
-		msg = "The password you passed is incorrect\n";
-	bytes_send = send(client.getFd(), msg.c_str(), msg.size(), 0);
-	std::cout << "<client> <codigo de error> <resto de cosas> :<codigo de error>" << std::endl;
-	if (bytes_send == -1)
-		print_err("Pass send failed");
+    if (this->getPassword() == buffer) {
+        msg = "The password provide was correct\n";
+        client.setPassword(true);
+    } else
+        msg = "The password you passed is incorrect\n";
+    bytes_send = send(client.getFd(), msg.c_str(), msg.size(), 0);
+    std::cout << "<client> <codigo de error> <resto de cosas> :<codigo de error>" << std::endl;
+    if (bytes_send == -1) print_err("Pass send failed");
 };
 void Server::parseNick(std::string buffer, Client &client) {
     (void)client;
@@ -34,9 +32,30 @@ void Server::parseUser(std::string buffer, Client &client) {
     ft_print(buffer);
 };
 void Server::parseJoin(std::string buffer, Client &client) {
-    (void)client;
-    ft_print("Inside Join: ");
-    ft_print(buffer);
+    std::vector<std::string> tokens = split(buffer, ',');
+    for (size_t i = 0; i < tokens.size(); i++) {
+        if (tokens.size() > 1 && tokens[i].find_first_of(":") != std::string::npos) {
+            ft_print(
+                "Joining multiple channels and setting topic in the same command is not supported",
+                RED);
+            return;
+        }
+        std::string topic = tokens[i].substr(tokens[i].find_first_of(":") + 1, tokens[i].size());
+        if (topic != tokens[i]) {
+            tokens[i] = tokens[i].substr(0, tokens[i].find_first_of(":") - 1);
+        } else {
+            topic = "";
+        }
+        if (isNewChannel(tokens[i]) == true) {
+            Channel newChannel(tokens[i], topic);
+            newChannel.addClient(client);
+            this->channels.push_back(newChannel);
+        } else {
+            this->findChannel(tokens[i])->addClient(client);
+        }
+    }
+
+    printChannels();
 };
 void Server::parsePart(std::string buffer, Client &client) {
     (void)client;

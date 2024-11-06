@@ -1,32 +1,37 @@
 #include <Client.hpp>
 
-Client::Client(int fd, std::string address) {
+Client::Client(int fd, sockaddr_in address) {
     this->fd = fd;
     this->address = address;
+    this->address_len = sizeof(this->address);
     this->auth = false;
     this->password = false;
     this->nick = "";
     this->user = "";
+    getpeername(this->fd, (struct sockaddr*)&this->address, &this->address_len);
+    this->host = gethostbyaddr(&this->address.sin_addr, sizeof(this->address.sin_addr), AF_INET);
+    this->hostname = "";
 }
 
 Client::Client() {}
 Client::~Client() {}
 
 int Client::getFd() const { return this->fd; }
-std::string Client::getAddress() const { return this->address; }
+sockaddr_in Client::getAddress() const { return this->address; }
 bool Client::getAuth() const { return (this->auth); }
 bool Client::getPass() const { return (this->password); }
 std::string Client::getNick() const { return (this->nick); }
 std::string Client::getUser() const { return (this->user); }
+hostent* Client::getHost() const { return (this->host); }
 
 void Client::setFd(int fd) { this->fd = fd; }
-void Client::setAddress(std::string address) { this->address = address; }
+void Client::setAddress(sockaddr_in address) { this->address = address; }
 void Client::setPassword(bool password) { this->password = password; }
 void Client::setAuth(bool auth) { this->auth = auth; }
 void Client::setNick(std::string nick) { this->nick = nick; }
 void Client::setUser(std::string user) { this->user = user; }
 
 std::ostream& operator<<(std::ostream& os, const Client& client) {
-    os << "Client " << client.getAddress() << " in socket " << client.getFd();
+    os << "Client " << client.getHost()->h_name << " in socket " << client.getFd();
     return (os);
 }

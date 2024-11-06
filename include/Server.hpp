@@ -10,12 +10,9 @@
     " |_|    \\__|          |_| |_|     \\___|\n" \
     "              ______                   \n"   \
     "             |______|                  \n"
+#include <Channel.hpp>
 #include <Client.hpp>
 #include <ircserv.hpp>
-
-enum {
-    
-};
 
 class Server {
    private:
@@ -32,6 +29,7 @@ class Server {
     sockaddr_in serverAddress;
     std::vector<struct pollfd> fds;
     std::map<int, Client> map;
+    std::vector<Channel> channels;
 
    public:
     Server(std::string port, std::string password);
@@ -43,9 +41,11 @@ class Server {
     int getPort() const;
     std::map<int, Client> getMap(void) const;
 
+    void printChannels();
     // Setters
     void setAuthFunctions(void);
     void setCmdFunctions(void);
+    void addChannel(Channel channel);
 
     int checkConnections(void);
     int iterateFds(void);
@@ -53,6 +53,8 @@ class Server {
     void manageUpdates(Client &client);
     void parseCommands(char *buffer, Client &client);
     void disconnectClient(Client &client);
+    bool isNewChannel(std::string name);
+    Channel *findChannel(std::string name);
     // Commands
     void parseCap(std::string buffer, Client &client);
     void parsePass(std::string buffer, Client &client);
