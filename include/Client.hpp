@@ -4,27 +4,32 @@
 #include <ircserv.hpp>
 
 class Client {
-private:
+   private:
     int fd;
-    std::string address;
+    struct sockaddr_in address;
+    socklen_t address_len;
     bool auth;
     bool password;
     std::string nick;
     std::string user;
-public:
+    std::string hostname;
+    struct hostent* host;
+
+   public:
     Client();
-    Client(int fd, std::string address);
+    Client(int fd, sockaddr_in address);
     ~Client();
 
     int getFd() const;
-    std::string getAddress() const;
+    sockaddr_in getAddress() const;
     bool getAuth() const;
     bool getPass() const;
     std::string getNick() const;
     std::string getUser() const;
+    hostent* getHost() const;
 
     void setFd(int fd);
-    void setAddress(std::string address);
+    void setAddress(sockaddr_in address);
     void setPassword(bool password);
     void setAuth(bool auth);
     void setNick(std::string nick);
