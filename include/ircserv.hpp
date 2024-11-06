@@ -32,12 +32,14 @@
 #define CYAN "\033[36m"    /* Cyan */
 #define WHITE "\033[37m"   /* White */
 
+class Server;
 class Client;
 
 void ft_print(std::string str);
 void ft_print(std::string str, const char* color);
 void print_err(std::string errorMessage);
 void printHelp();
+void printLaunchServer(const Server& server);
 void printConnected(Client client);
 void printDisconnected(Client client);
 void printCloseServer();

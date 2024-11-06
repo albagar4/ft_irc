@@ -26,6 +26,7 @@ class Server {
     std::string password;
     int port;
     int serverSocket;
+    std::string hostname;
     sockaddr_in serverAddress;
     std::vector<struct pollfd> fds;
     std::map<int, Client> map;
@@ -39,6 +40,7 @@ class Server {
     int getServerSocket(void) const;
     std::string getPassword() const;
     int getPort() const;
+    std::string getHostname() const;
     std::map<int, Client> getMap(void) const;
 
     void printChannels();

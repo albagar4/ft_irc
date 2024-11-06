@@ -33,6 +33,11 @@ void Server::createServerSocket() {
     newPoll.events = POLLIN;
     newPoll.revents = 0;
     fds.push_back(newPoll);
+    char buffer[1024];
+    if (gethostname(buffer, 1024) == -1) {
+        print_err("Unable to fetch hostname");
+    }
+    this->hostname = buffer;
 }
 
 static int parsePort(std::string port) {
@@ -54,7 +59,7 @@ Server::Server(std::string port, std::string password) {
     this->setAuthFunctions();
     this->setCmdFunctions();
     createServerSocket();
-    ft_print(ASCII_ART, MAGENTA);
+    printLaunchServer(*this);
 }
 
 Server::~Server() { close(this->serverSocket); }
@@ -79,6 +84,7 @@ void Server::setCmdFunctions(void) {
 
 int Server::getServerSocket(void) const { return (this->serverSocket); }
 int Server::getPort(void) const { return (this->port); }
+std::string Server::getHostname() const { return (this->hostname); }
 std::string Server::getPassword(void) const { return (this->password); }
 std::map<int, Client> Server::getMap(void) const { return (this->map); }
 

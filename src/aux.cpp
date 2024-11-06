@@ -48,6 +48,16 @@ void printCloseServer() {
     std::cout << RESET;
 }
 
+void printLaunchServer(const Server& server) {
+    std::cout << MAGENTA;
+    std::cout << ASCII_ART;
+    std::cout << "Password: \t" << server.getPassword();
+    std::cout << "\nPort: \t\t" << server.getPort();
+    std::cout << "\nSocket: \t" << server.getServerSocket();
+    std::cout << "\nHostname: \t" << server.getHostname();
+    std::cout << RESET << std::endl;
+}
+
 std::vector<std::string> split(std::string input, char delimiter) {
     std::vector<std::string> tokens;
     std::stringstream ss(input);
