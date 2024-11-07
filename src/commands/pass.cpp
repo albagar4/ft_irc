@@ -2,16 +2,32 @@
 #include <Server.hpp>
 #include <ircserv.hpp>
 
-void Server::parsePass(std::string buffer, Client &client) {
-    ssize_t bytes_send;
-    std::string msg;
+std::string sendError(NUM errorCode, std::string clientName) {
+    std::ostringstream oss;
+    oss << errorCode;
 
-    if (this->getPassword() == buffer) {
-        msg = "The password provide was correct\n";
+    std::string message = errorMessages[errorCode];
+    std::string buffer = oss.str() + " " + clientName + " :" + message;
+
+    return (buffer);
+}
+
+void Server::parsePass(std::string buffer, Client &client) {
+    std::string msg;
+    bool isEmpty = true;
+
+    client.setHostname();
+    std::cout << buffer << std::endl;
+    for (unsigned long int i = 0; i < buffer.size(); i++)
+        if (buffer[i] != ' ' && buffer[i] != '\t' && buffer[i] != '\0')
+            isEmpty = false;
+    if (isEmpty == true)
+        msg = this->getHostname() + " " + sendError(ERR_NEEDMOREPARAMS, client.getHostname());
+    else if (this->getPassword() == buffer && client.getPass() == false)
         client.setPassword(true);
-    } else
-        msg = "The password you passed is incorrect\n";
-    bytes_send = send(client.getFd(), msg.c_str(), msg.size(), 0);
-    std::cout << "<client> <codigo de error> <resto de cosas> :<codigo de error>" << std::endl;
-    if (bytes_send == -1) print_err("Pass send failed");
+    else if (client.getPass() == true)
+        msg = this->getHostname() + " " + sendError(ERR_ALREADYREGISTERED, client.getHostname());
+    else
+        msg = this->getHostname() + " " + sendError(ERR_PASSWDMISMATCH, client.getHostname());
+    client.setResponse(msg);
 }

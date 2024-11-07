@@ -15,9 +15,14 @@
 #include <ircserv.hpp>
 
 enum NUM{
+    ERR_NEEDMOREPARAMS = 461,
+    ERR_ALREADYREGISTERED = 462,
+    ERR_PASSWDMISMATCH = 464,
     ERR_NOTREGISTERED = 451,
-
+    ERR_UNKNOWNCOMMAND = 421,
 };
+
+extern std::map<NUM, std::string> errorMessages;
 
 class Server {
    private:
@@ -76,6 +81,9 @@ class Server {
     void parsePrivMsg(std::string buffer, Client &client);
     void parseQuit(std::string buffer, Client &client);
 };
+
+
+void initializeErrorMessages();
 
 std::ostream &operator<<(std::ostream &os, const Server &server);
 #endif
