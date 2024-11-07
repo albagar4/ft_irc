@@ -151,7 +151,7 @@ void Server::parseCommands(char* buffer, Client& client) {
     }
 
     // FORZANDO AUTENTIFICACION PARA HACER EL JOIN
-    if (client.getAuth() == true) {
+    if (client.getAuth() == false) {
         std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
         for (int i = 0; i < 4; i++) {
             if (title == commandArray[i]) {
@@ -217,4 +217,13 @@ Channel* Server::findChannel(std::string name) {
         if (this->channels[i].getName() == name) return &this->channels[i];
     }
     return NULL;
+}
+
+std::map<NUM, std::string> errorMessages;
+
+void initializeErrorMessages(){
+    errorMessages[ERR_NEEDMOREPARAMS] = "Not enough parameters";
+    errorMessages[ERR_ALREADYREGISTERED] = "You may not reregister";
+    errorMessages[ERR_PASSWDMISMATCH] = "Password incorrect";
+    errorMessages[ERR_NOTREGISTERED] = "You have not registered";
 }
