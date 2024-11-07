@@ -14,6 +14,11 @@
 #include <Client.hpp>
 #include <ircserv.hpp>
 
+enum NUM{
+    ERR_NOTREGISTERED = 451,
+
+};
+
 class Server {
    private:
     typedef void (Server::*authFunctions)(std::string, Client &);
