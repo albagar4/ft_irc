@@ -141,35 +141,42 @@ void Server::manageUpdates(Client& client) {
 
 void Server::parseCommands(char* buffer, Client& client) {
     std::string buff(buffer);
-    std::string title = buff.substr(0, buff.find(" "));
+    std::vector<std::string> lines = split(buff, '\n');
 
-    if (!buff.empty() && buff[buff.size() - 1] == '\n') {
-        buff.erase(buff.size() - 1);
-    }
-    if (!buff.empty() && buff[buff.size() - 1] == '\r') {
-        buff.erase(buff.size() - 1);
-    }
+    for (size_t i = 0; i < lines.size(); i++) {
+        if (!lines[i].empty() && lines[i][lines[i].size() - 1] == '\n') {
+            lines[i].erase(lines[i].size() - 1);
+        }
+        if (!lines[i].empty() && lines[i][lines[i].size() - 1] == '\r') {
+            lines[i].erase(lines[i].size() - 1);
+        }
+        std::string title = lines[i].substr(0, buff.find(" "));
+        if (client.getAuth() == false) {
 
-    // FORZANDO AUTENTIFICACION PARA HACER EL JOIN
-    if (client.getAuth() == false) {
-        std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
-        for (int i = 0; i < 4; i++) {
-            if (title == commandArray[i]) {
-                (this->*authentification[i])(buff.substr(buff.find(" ") + 1).c_str(), client);
-                return;
+            std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
+            for (int j = 0; j < 4; j++) {
+                if (title == commandArray[j]) {
+                    (this->*authentification[j])(lines[i].substr(lines[i].find(" ") + 1).c_str(), client);
+                }
+            }
+            // MENSAJE DE ERROR DE COMANDO
+        } else {
+            std::string commandArray[8] = {"JOIN",  "PART", "KICK",    "INVITE",
+                                        "TOPIC", "MODE", "PRIVMSG", "QUIT"};
+            for (int j = 0; j < 8; j++) {
+                if (title == commandArray[j]) {
+                    (this->*commands[j])(lines[i].substr(lines[i].find(" ") + 1).c_str(), client);
+                    break;
+                }
+            }
+            // mensaje con la lista de usos y comandos disponibles
+        }
+        for (std::map<int, Client>::iterator it = this->map.begin(); it != this->map.end(); it++) {
+            if (!it->second.getResponse().empty()) {
+                send(it->first, it->second.getResponse().c_str(), it->second.getResponse().size(), 0);
+                it->second.setResponse("");
             }
         }
-        // enviar mensaje de no autentificacion con pasos a seguir
-    } else {
-        std::string commandArray[8] = {"JOIN",  "PART", "KICK",    "INVITE",
-                                       "TOPIC", "MODE", "PRIVMSG", "QUIT"};
-        for (int i = 0; i < 8; i++) {
-            if (title == commandArray[i]) {
-                (this->*commands[i])(buff.substr(buff.find(" ") + 1).c_str(), client);
-                return;
-            }
-        }
-        // mensaje con la lista de usos y comandos disponibles
     }
 }
 
@@ -226,4 +233,5 @@ void initializeErrorMessages(){
     errorMessages[ERR_ALREADYREGISTERED] = "You may not reregister";
     errorMessages[ERR_PASSWDMISMATCH] = "Password incorrect";
     errorMessages[ERR_NOTREGISTERED] = "You have not registered";
+    errorMessages[ERR_UNKNOWNCOMMAND] = "Unknown command";
 }

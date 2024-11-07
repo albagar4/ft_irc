@@ -19,6 +19,7 @@ enum NUM{
     ERR_ALREADYREGISTERED = 462,
     ERR_PASSWDMISMATCH = 464,
     ERR_NOTREGISTERED = 451,
+    ERR_UNKNOWNCOMMAND = 421,
 };
 
 extern std::map<NUM, std::string> errorMessages;
