@@ -34,6 +34,7 @@ class Client {
     void setAuth(bool auth);
     void setNick(std::string nick);
     void setUser(std::string user);
+    void setHostname();
 };
 
 std::ostream& operator<<(std::ostream& os, const Client& client);

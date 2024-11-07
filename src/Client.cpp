@@ -8,7 +8,8 @@ Client::Client(int fd, sockaddr_in address) {
     this->password = false;
     this->nick = "";
     this->user = "";
-    getpeername(this->fd, (struct sockaddr*)&this->address, &this->address_len);
+    if (getpeername(this->fd, (struct sockaddr*)&this->address, &this->address_len) == -1)
+        print_err("Unable to source hostname");
     this->host = gethostbyaddr(&this->address.sin_addr, sizeof(this->address.sin_addr), AF_INET);
     this->hostname = "";
 }
@@ -30,6 +31,9 @@ void Client::setPassword(bool password) { this->password = password; }
 void Client::setAuth(bool auth) { this->auth = auth; }
 void Client::setNick(std::string nick) { this->nick = nick; }
 void Client::setUser(std::string user) { this->user = user; }
+void Client::setHostname() {
+    this->hostname = this->nick + "!" + this->user + "@" + this->host->h_name;
+}
 
 std::ostream& operator<<(std::ostream& os, const Client& client) {
     os << "Client " << client.getHost()->h_name << " in socket " << client.getFd();

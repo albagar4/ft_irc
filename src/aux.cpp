@@ -47,7 +47,6 @@ void printCloseServer() {
     std::cout << "Server was closed\n";
     std::cout << RESET;
 }
-
 void printLaunchServer(const Server& server) {
     std::cout << MAGENTA;
     std::cout << ASCII_ART;
@@ -57,7 +56,6 @@ void printLaunchServer(const Server& server) {
     std::cout << "\nHostname: \t" << server.getHostname();
     std::cout << RESET << std::endl;
 }
-
 std::vector<std::string> split(std::string input, char delimiter) {
     std::vector<std::string> tokens;
     std::stringstream ss(input);

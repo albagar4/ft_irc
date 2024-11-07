@@ -3,3 +3,4 @@ obj/
 ircserv
 .clangd
 .clang-format
+.cache_exists

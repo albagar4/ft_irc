@@ -22,7 +22,8 @@ WHITE = $(shell tput setaf 7)
 
 #Sources
 	
-SRC_FILES = main aux Server Client Channel command
+SRC_FILES = main aux Server Client Channel \
+						commands/cap commands/user commands/nick commands/pass commands/join commands/invite commands/kick commands/quit commands/mode commands/topic commands/privmsg commands/part
 
 SRC = $(addprefix $(SRC_DIR), $(addsuffix .cpp, $(SRC_FILES)))
 OBJ = $(addprefix $(OBJ_DIR), $(addsuffix .o, $(SRC_FILES)))
@@ -41,13 +42,16 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp | $(OBJF)
 			@$(CC) -I./$(INCLUDE) $(CFLAGS) -c $< -o $@
 
 $(OBJF):
-			@mkdir -p $(OBJ_DIR)
+			@mkdir -p $(OBJ_DIR) $(OBJ_DIR)/commands
+			@touch $(OBJF)
 
 clean:
+			@rm $(OBJF)
 			@rm -rf $(OBJ_DIR)
 			@echo "$(BLUE)$(NAME) object files cleaned!$(DEF_COLOR)"
 
 fclean:		
+			@rm $(OBJF)
 			@rm -rf $(OBJ_DIR)
 			@rm -f $(NAME)
 			@echo "$(BLUE)$(NAME) executable cleaned!$(DEF_COLOR)"
