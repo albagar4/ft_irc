@@ -35,8 +35,9 @@ class Channel {
     std::vector<Client> getOperators() const;
     int getUserLimit() const;
     bool getInviteOnly() const;
-    bool isOperator(Client client);
+    bool isOperator(Client client) const;
     void printClients();
+    std::string getUserList() const;
 };
 
 #endif

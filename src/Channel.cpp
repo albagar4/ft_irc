@@ -38,6 +38,15 @@ std::vector<Client> Channel::getClients() const { return this->clients; }
 std::vector<Client> Channel::getOperators() const { return this->operators; }
 int Channel::getUserLimit() const { return this->userLimit; }
 bool Channel::getInviteOnly() const { return this->inviteOnly; }
+std::string Channel::getUserList() const {
+    std::string list = "";
+    for (size_t i = 0; i < this->clients.size(); i++) {
+        if (this->isOperator(this->clients[i]) == true) list += "@";
+        list += this->clients[i].getNick();
+        list += " ";
+    }
+    return list;
+}
 
 void Channel::printClients() {
     for (size_t i = 0; i < this->clients.size(); i++) {
@@ -49,7 +58,7 @@ void Channel::printClients() {
     }
 }
 
-bool Channel::isOperator(Client client) {
+bool Channel::isOperator(Client client) const {
     for (size_t i = 0; i < this->operators.size(); i++) {
         if (client.getFd() == this->operators[i].getFd()) return true;
     }

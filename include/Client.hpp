@@ -36,6 +36,7 @@ class Client {
     void setNick(std::string nick);
     void setUser(std::string user);
     void setHostname();
+    std::string getUserList() const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Client& client);
