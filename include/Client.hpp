@@ -14,6 +14,7 @@ class Client {
     std::string user;
     std::string hostname;
     struct hostent* host;
+    std::string response;
 
    public:
     Client();
@@ -28,6 +29,7 @@ class Client {
     std::string getUser() const;
     hostent* getHost() const;
     std::string getHostname() const;
+    std::string getResponse() const;
 
     void setFd(int fd);
     void setAddress(sockaddr_in address);
@@ -36,7 +38,7 @@ class Client {
     void setNick(std::string nick);
     void setUser(std::string user);
     void setHostname();
-    std::string getUserList() const;
+    void setResponse(std::string response);
 };
 
 std::ostream& operator<<(std::ostream& os, const Client& client);
