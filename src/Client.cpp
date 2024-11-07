@@ -36,9 +36,7 @@ void Client::setUser(std::string user) { this->user = user; }
 void Client::setHostname() {
     this->hostname = this->nick + "!" + this->user + "@" + this->host->h_name;
 }
-void Client::setResponse(std::string response) {
-    this->response = response;
-}
+void Client::setResponse(std::string response) { this->response = response; }
 
 std::ostream& operator<<(std::ostream& os, const Client& client) {
     os << "Client " << client.getHost()->h_name << " in socket " << client.getFd();
