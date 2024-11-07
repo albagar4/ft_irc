@@ -15,8 +15,17 @@
 #include <ircserv.hpp>
 
 enum NUM{
+    ERR_NEEDMOREPARAMS = 461,
+    ERR_ALREADYREGISTERED = 462,
+    ERR_PASSWDMISMATCH = 464,
     ERR_NOTREGISTERED = 451,
+};
 
+std::map<NUM, std::string> errorMessages = {
+    {ERR_NEEDMOREPARAMS, "Not enough parameters"},
+    {ERR_ALREADYREGISTERED, "You may not reregister"},
+    {ERR_PASSWDMISMATCH, "Password incorrect"},
+    {ERR_NOTREGISTERED, "You have not registered"},
 };
 
 class Server {
