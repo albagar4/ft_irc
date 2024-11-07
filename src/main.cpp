@@ -6,6 +6,7 @@ int main(int argc, char **argv) {
         print_err("Incorrect nbr of parameters\nUsage: ./ircserv <port> <password>");
     else {
         Server server(argv[1], argv[2]);
+        initializeErrorMessages();
         while (true) {
             if (server.checkConnections() > 0) {
                 server.iterateFds();

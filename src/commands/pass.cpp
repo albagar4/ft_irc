@@ -12,21 +12,22 @@ std::string sendError(NUM errorCode, std::string clientName) {
     return (buffer);
 }
 
-//client es getHostName
 void Server::parsePass(std::string buffer, Client &client) {
-    ssize_t bytes_send;
     std::string msg;
+    bool isEmpty = true;
 
-    if (buffer.empty())
-        msg = this->getHostname() + " " + sendError(ERR_NEEDMOREPARAMS, client.getHostName());
-    else if (this->getPassword() == buffer && client.getPass() == false) {
+    client.setHostname();
+    std::cout << buffer << std::endl;
+    for (unsigned long int i = 0; i < buffer.size(); i++)
+        if (buffer[i] != ' ' && buffer[i] != '\t' && buffer[i] != '\0')
+            isEmpty = false;
+    if (isEmpty == true)
+        msg = this->getHostname() + " " + sendError(ERR_NEEDMOREPARAMS, client.getHostname());
+    else if (this->getPassword() == buffer && client.getPass() == false)
         client.setPassword(true);
-        return ;
-    }
-    else if (this->getPassword() == buffer && client.getPass() == true)
-        msg = this->getHostname() + " " + sendError(ERR_ALREADYREGISTERED, client.getHostName());
+    else if (client.getPass() == true)
+        msg = this->getHostname() + " " + sendError(ERR_ALREADYREGISTERED, client.getHostname());
     else
-        msg = this->getHostname() + " " + sendError(ERR_PASSWDMISMATCH, client.getHostName());
-    bytes_send = send(client.getFd(), msg.c_str(), msg.size(), 0);
-    if (bytes_send == -1) print_err("Pass send failed");
+        msg = this->getHostname() + " " + sendError(ERR_PASSWDMISMATCH, client.getHostname());
+    client.setResponse(msg);
 }

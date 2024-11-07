@@ -19,14 +19,10 @@ enum NUM{
     ERR_ALREADYREGISTERED = 462,
     ERR_PASSWDMISMATCH = 464,
     ERR_NOTREGISTERED = 451,
+    ERR_UNKNOWNCOMMAND = 421,
 };
 
-std::map<NUM, std::string> errorMessages = {
-    {ERR_NEEDMOREPARAMS, "Not enough parameters"},
-    {ERR_ALREADYREGISTERED, "You may not reregister"},
-    {ERR_PASSWDMISMATCH, "Password incorrect"},
-    {ERR_NOTREGISTERED, "You have not registered"},
-};
+extern std::map<NUM, std::string> errorMessages;
 
 class Server {
    private:
@@ -85,6 +81,9 @@ class Server {
     void parsePrivMsg(std::string buffer, Client &client);
     void parseQuit(std::string buffer, Client &client);
 };
+
+
+void initializeErrorMessages();
 
 std::ostream &operator<<(std::ostream &os, const Server &server);
 #endif

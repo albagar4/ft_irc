@@ -25,6 +25,7 @@ std::string Client::getNick() const { return (this->nick); }
 std::string Client::getUser() const { return (this->user); }
 hostent* Client::getHost() const { return (this->host); }
 std::string Client::getHostname() const { return (this->hostname); }
+std::string Client::getResponse() const { return (this->response); }
 
 void Client::setFd(int fd) { this->fd = fd; }
 void Client::setAddress(sockaddr_in address) { this->address = address; }
@@ -34,6 +35,9 @@ void Client::setNick(std::string nick) { this->nick = nick; }
 void Client::setUser(std::string user) { this->user = user; }
 void Client::setHostname() {
     this->hostname = this->nick + "!" + this->user + "@" + this->host->h_name;
+}
+void Client::setResponse(std::string response) {
+    this->response = response;
 }
 
 std::ostream& operator<<(std::ostream& os, const Client& client) {
