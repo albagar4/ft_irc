@@ -27,6 +27,7 @@ class Client {
     std::string getNick() const;
     std::string getUser() const;
     hostent* getHost() const;
+    std::string getHostname() const;
 
     void setFd(int fd);
     void setAddress(sockaddr_in address);

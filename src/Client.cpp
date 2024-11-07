@@ -24,6 +24,7 @@ bool Client::getPass() const { return (this->password); }
 std::string Client::getNick() const { return (this->nick); }
 std::string Client::getUser() const { return (this->user); }
 hostent* Client::getHost() const { return (this->host); }
+std::string Client::getHostname() const { return (this->hostname); }
 
 void Client::setFd(int fd) { this->fd = fd; }
 void Client::setAddress(sockaddr_in address) { this->address = address; }
