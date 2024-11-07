@@ -57,6 +57,7 @@ static std::string err_ChannelIsFull(Server server, Client client, Channel chann
 //     response += client.getNick() + " ";
 //     response += channel.getName();
 //     response += " :Cannot join channel (+i)";
+//     response += "\r\n";
 //     return response;
 // }
 void Server::parseJoin(std::string buffer, Client &client) {
