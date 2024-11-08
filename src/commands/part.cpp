@@ -39,27 +39,28 @@ void Server::parsePart(std::string buffer, Client &client) {
     size_t i;
     std::vector<std::string> tokens = split(buffer, ',');
     std::string name, reason;
-    // Este trycatch está mal, debería estar dentro del for loop para tener en cuenta que te puedes
-    // salir de multiples canales en un solo comando (i.e. PART #canal1,#canal2)
-    // Ahora mismo solo funciona con un solo canal por comando
+    // Este trycatch está mal, debería estar dentro del for loop para tener en
+    // cuenta que te puedes salir de multiples canales en un solo comando (i.e.
+    // PART #canal1,#canal2) Ahora mismo solo funciona con un solo canal por
+    // comando
     try {
         if (buffer.empty()) throw 461;
-        for (i = 0; tokens.size(); i++) {
+        for (i = 0; i < tokens.size(); i++) {
             name = tokens[i].substr(0, tokens[i].find(" "));
             reason = tokens[i].substr(tokens[i].find(" ") + 1, tokens[i].size() - 1);
             temp = this->findChannel(name);
             if (!temp) throw 403;
             if (temp->isClient(client)) {
                 temp->disconnectClient(client);  // Esto está mal, el valgrind explota
-                if (temp->isEmpty()) this->closeChannel(*temp);
                 throw 0;
             } else
                 throw 442;
         }
     } catch (int code) {
-        if (code == 0)
+        if (code == 0) {
             client.setResponse(rplSuccessful(client, *temp));
-        else if (code == 403)
+            if (temp->isEmpty()) this->closeChannel(*temp);
+        } else if (code == 403)
             client.setResponse(err_NoSuchChannel(*this, client, name));
         else if (code == 442)
             client.setResponse(err_NotOnChannel(*this, client, *temp));
