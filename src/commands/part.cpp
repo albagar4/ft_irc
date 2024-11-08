@@ -39,6 +39,9 @@ void Server::parsePart(std::string buffer, Client &client) {
     size_t i;
     std::vector<std::string> tokens = split(buffer, ',');
     std::string name, reason;
+    // Este trycatch está mal, debería estar dentro del for loop para tener en cuenta que te puedes
+    // salir de multiples canales en un solo comando (i.e. PART #canal1,#canal2)
+    // Ahora mismo solo funciona con un solo canal por comando
     try {
         if (buffer.empty()) throw 461;
         for (i = 0; tokens.size(); i++) {
