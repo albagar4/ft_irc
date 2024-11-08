@@ -2,41 +2,11 @@
 #include <Server.hpp>
 #include <ircserv.hpp>
 
-static std::string rpl_NamReply(Server server, Client client, Channel channel) {
-    std::string response = server.getHostname() + " 353 ";
-    response += client.getNick() + " ";
-    response += "= ";
-    response += channel.getName() + " :";
-    response += channel.getUserList();
-    return response;
-}
-static std::string rpl_EndOfNames(Server server, Client client, Channel channel) {
-    std::string response = server.getHostname() + " 366 ";
-    response += client.getNick() + " ";
-    response += channel.getName() + " :";
-    response += "End of /NAMES list.";
-    return response;
-}
-static std::string rpl_Topic(Server server, Client client, Channel channel) {
-    std::string response = server.getHostname() + " 332 ";
-    response += client.getNick() + " ";
-    response += channel.getName() + " :";
-    response += channel.getTopic();
-    return response;
-}
-static std::string rpl_Successful(Server server, Client client, Channel channel) {
-    std::string response = client.getHostname();
-    response += " JOIN : ";
-    response += channel.getName();
-    if (channel.getTopic() != "") response += "\r\n" + rpl_Topic(server, client, channel);
-    response += "\r\n" + rpl_NamReply(server, client, channel);
-    response += "\r\n" + rpl_EndOfNames(server, client, channel) + "\r\n";
-    return response;
-}
 static std::string err_NeedMoreParams(Server server, Client client) {
     std::string response = server.getHostname() + " 461 ";
     response += client.getNick();
     response += " JOIN :Not enough parameters";
+    response += "\r\n";
     return response;
 }
 static std::string err_ChannelIsFull(Server server, Client client, Channel channel) {
@@ -44,6 +14,7 @@ static std::string err_ChannelIsFull(Server server, Client client, Channel chann
     response += client.getNick() + " ";
     response += channel.getName();
     response += " :Cannot join channel (+l)";
+    response += "\r\n";
     return response;
 }
 // static std::string err_InviteOnlyChan(Server server, Client client, Channel channel) {
@@ -51,13 +22,46 @@ static std::string err_ChannelIsFull(Server server, Client client, Channel chann
 //     response += client.getNick() + " ";
 //     response += channel.getName();
 //     response += " :Cannot join channel (+i)";
+//     response += "\r\n";
 //     return response;
 // }
+static std::string rpl_NamReply(Server server, Client client, Channel channel) {
+    std::string response = server.getHostname() + " 353 ";
+    response += client.getNick() + " ";
+    response += "= ";
+    response += channel.getName() + " :";
+    response += channel.getUserList();
+    response += "\r\n";
+    return response;
+}
+static std::string rpl_EndOfNames(Server server, Client client, Channel channel) {
+    std::string response = server.getHostname() + " 366 ";
+    response += client.getNick() + " ";
+    response += channel.getName() + " :";
+    response += "End of /NAMES list.";
+    response += "\r\n";
+    return response;
+}
+static std::string rpl_Topic(Server server, Client client, Channel channel) {
+    std::string response = server.getHostname() + " 332 ";
+    response += client.getNick() + " ";
+    response += channel.getName() + " :";
+    response += channel.getTopic();
+    response += "\r\n";
+    return response;
+}
+static std::string rpl_Successful(Server server, Client client, Channel channel) {
+    std::string response = client.getHostname();
+    response += " JOIN : ";
+    response += channel.getName();
+    response += "\r\n";
+    if (channel.getTopic() != "") response += rpl_Topic(server, client, channel);
+    response += rpl_NamReply(server, client, channel);
+    response += rpl_EndOfNames(server, client, channel);
+    return response;
+}
 void Server::parseJoin(std::string buffer, Client &client) {
     Channel *temp;
-    client.setNick("alvega-g");
-    client.setUser("alvega-g");
-    client.setHostname();
     try {
         if (buffer.empty()) throw 461;
         std::vector<std::string> tokens = split(buffer, ',');
@@ -78,7 +82,7 @@ void Server::parseJoin(std::string buffer, Client &client) {
                 temp = this->findChannel(tokens[i]);
                 if ((size_t)temp->getUserLimit() == temp->getClients().size()) throw 471;
                 // Check if user is invited: if (temp->getInviteOnly() == true && ) throw 473;
-                this->findChannel(tokens[i])->addClient(client);
+                temp->addClient(client);
             }
             client.setResponse(rpl_Successful(*this, client, *this->findChannel(tokens[i])));
         }
@@ -90,6 +94,4 @@ void Server::parseJoin(std::string buffer, Client &client) {
         // else if (code == 473)
         //  client.setResponse(err_InviteOnlyChan(*this, client, temp));
     }
-    std::cout << client.getResponse() << std::endl;
-    printChannels();
 }

@@ -140,6 +140,9 @@ void Server::manageUpdates(Client& client) {
 }
 
 void Server::parseCommands(char* buffer, Client& client) {
+    client.setNick("alvega-g");
+    client.setUser("alvega-g");
+    client.setHostname();
     std::string buff(buffer);
     std::vector<std::string> lines = split(buff, '\n');
 
@@ -151,18 +154,19 @@ void Server::parseCommands(char* buffer, Client& client) {
             lines[i].erase(lines[i].size() - 1);
         }
         std::string title = lines[i].substr(0, buff.find(" "));
-        if (client.getAuth() == false) {
+        if (client.getAuth() == true) {  // Hardcodeito bueno para desarrollar PART
 
             std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
             for (int j = 0; j < 4; j++) {
                 if (title == commandArray[j]) {
-                    (this->*authentification[j])(lines[i].substr(lines[i].find(" ") + 1).c_str(), client);
+                    (this->*authentification[j])(lines[i].substr(lines[i].find(" ") + 1).c_str(),
+                                                 client);
                 }
             }
             // MENSAJE DE ERROR DE COMANDO
         } else {
             std::string commandArray[8] = {"JOIN",  "PART", "KICK",    "INVITE",
-                                        "TOPIC", "MODE", "PRIVMSG", "QUIT"};
+                                           "TOPIC", "MODE", "PRIVMSG", "QUIT"};
             for (int j = 0; j < 8; j++) {
                 if (title == commandArray[j]) {
                     (this->*commands[j])(lines[i].substr(lines[i].find(" ") + 1).c_str(), client);
@@ -173,7 +177,8 @@ void Server::parseCommands(char* buffer, Client& client) {
         }
         for (std::map<int, Client>::iterator it = this->map.begin(); it != this->map.end(); it++) {
             if (!it->second.getResponse().empty()) {
-                send(it->first, it->second.getResponse().c_str(), it->second.getResponse().size(), 0);
+                send(it->first, it->second.getResponse().c_str(), it->second.getResponse().size(),
+                     0);
                 it->second.setResponse("");
             }
         }
@@ -225,10 +230,18 @@ Channel* Server::findChannel(std::string name) {
     }
     return NULL;
 }
+void Server::closeChannel(Channel channel) {
+    for (size_t i = 0; i < this->channels.size(); i++) {
+        if (this->channels[i].getName() == channel.getName()) {
+            this->channels.erase(this->channels.begin() + i);
+            return;
+        }
+    }
+}
 
 std::map<NUM, std::string> errorMessages;
 
-void initializeErrorMessages(){
+void initializeErrorMessages() {
     errorMessages[ERR_NEEDMOREPARAMS] = "Not enough parameters";
     errorMessages[ERR_ALREADYREGISTERED] = "You may not reregister";
     errorMessages[ERR_PASSWDMISMATCH] = "Password incorrect";

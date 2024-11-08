@@ -14,7 +14,7 @@
 #include <Client.hpp>
 #include <ircserv.hpp>
 
-enum NUM{
+enum NUM {
     ERR_NEEDMOREPARAMS = 461,
     ERR_ALREADYREGISTERED = 462,
     ERR_PASSWDMISMATCH = 464,
@@ -67,6 +67,7 @@ class Server {
     void disconnectClient(Client &client);
     bool isNewChannel(std::string name);
     Channel *findChannel(std::string name);
+    void closeChannel(Channel channel);
     // Commands
     void parseCap(std::string buffer, Client &client);
     void parsePass(std::string buffer, Client &client);
@@ -81,7 +82,6 @@ class Server {
     void parsePrivMsg(std::string buffer, Client &client);
     void parseQuit(std::string buffer, Client &client);
 };
-
 
 void initializeErrorMessages();
 
