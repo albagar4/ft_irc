@@ -5,20 +5,22 @@
 void Server::parseNick(std::string buffer, Client &client) {
     ft_print("Inside Nick: ");
     ft_print(buffer);
-    if (buffer.empty()){
-        print_err(this->getHostname() + " 431 :No nickname given");
-        return ;
-    }
-    if (buffer.find('#') >= 0 || buffer.find(':') >= 0|| buffer.find(' ') >= 0 || isdigit(buffer[0])){
-        print_err(this->getHostname() + " 432 " + buffer + " :Erroneus nickname");
-        return ;
-    }
-    for (int i = 0; i < this->getMap().size(); i++)
-    {
-        if (this->map[i].getNick().compare(buffer) == 0){
-            print_err(this->getHostname() + " 433 " + buffer + " :Nickname is already in use");
-            return ;
+    try {
+        if (buffer.empty()) throw 431;
+        if (buffer.find('#') != buffer.npos || buffer.find(':') != buffer.npos || buffer.find(' ') != buffer.npos || isdigit(buffer[0])) throw 432;
+        for (unsigned long i = 0; i < this->getMap().size(); i++)
+        {
+            ft_print(this->map[i].getNick());
+            if (this->map[i].getNick().compare(buffer) == 0) throw 433;
         }
+        client.setNick(buffer);
+    } catch (int code) {
+        if (code == 431)
+            client.setResponse(":" + this->getHostname() + " 431 :No nickname given\r\n");
+        if (code == 432)
+            client.setResponse(":" + this->getHostname() + " 432 " + buffer + " :Erroneus nickname\r\n");
+        if (code == 433)
+            client.setResponse(":" + this->getHostname() + " 433 " + buffer + " :Nickname is already in use\r\n");
+        std::cout << client.getResponse() << std::endl;
     }
-    client.setNick(buffer);
 }
