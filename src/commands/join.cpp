@@ -3,14 +3,14 @@
 #include <ircserv.hpp>
 
 static std::string err_NeedMoreParams(Server server, Client client) {
-    std::string response = server.getHostname() + " 461 ";
+    std::string response = ":" + server.getHostname() + " 461 ";
     response += client.getNick();
     response += " JOIN :Not enough parameters";
     response += "\r\n";
     return response;
 }
 static std::string err_ChannelIsFull(Server server, Client client, Channel channel) {
-    std::string response = server.getHostname() + " 471 ";
+    std::string response = ":" + server.getHostname() + " 471 ";
     response += client.getNick() + " ";
     response += channel.getName();
     response += " :Cannot join channel (+l)";
@@ -18,7 +18,7 @@ static std::string err_ChannelIsFull(Server server, Client client, Channel chann
     return response;
 }
 // static std::string err_InviteOnlyChan(Server server, Client client, Channel channel) {
-//     std::string response = server.getHostname() + " 473 ";
+//     std::string response =":" +  server.getHostname() + " 473 ";
 //     response += client.getNick() + " ";
 //     response += channel.getName();
 //     response += " :Cannot join channel (+i)";
@@ -26,7 +26,7 @@ static std::string err_ChannelIsFull(Server server, Client client, Channel chann
 //     return response;
 // }
 static std::string rpl_NamReply(Server server, Client client, Channel channel) {
-    std::string response = server.getHostname() + " 353 ";
+    std::string response = ":" + server.getHostname() + " 353 ";
     response += client.getNick() + " ";
     response += "= ";
     response += channel.getName() + " :";
@@ -35,7 +35,7 @@ static std::string rpl_NamReply(Server server, Client client, Channel channel) {
     return response;
 }
 static std::string rpl_EndOfNames(Server server, Client client, Channel channel) {
-    std::string response = server.getHostname() + " 366 ";
+    std::string response = ":" + server.getHostname() + " 366 ";
     response += client.getNick() + " ";
     response += channel.getName() + " :";
     response += "End of /NAMES list.";
@@ -43,7 +43,7 @@ static std::string rpl_EndOfNames(Server server, Client client, Channel channel)
     return response;
 }
 static std::string rpl_Topic(Server server, Client client, Channel channel) {
-    std::string response = server.getHostname() + " 332 ";
+    std::string response = ":" + server.getHostname() + " 332 ";
     response += client.getNick() + " ";
     response += channel.getName() + " :";
     response += channel.getTopic();
@@ -51,7 +51,7 @@ static std::string rpl_Topic(Server server, Client client, Channel channel) {
     return response;
 }
 static std::string rpl_Successful(Server server, Client client, Channel channel) {
-    std::string response = client.getHostname();
+    std::string response = ":" + client.getHostname();
     response += " JOIN : ";
     response += channel.getName();
     response += "\r\n";

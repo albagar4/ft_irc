@@ -5,7 +5,7 @@ INCLUDE = include/
 SRC_DIR = src/
 OBJ_DIR = obj/
 CC = clang++
-CFLAGS = -Wall -Werror -Wextra -std=c++98
+CFLAGS = -Wall -Werror -Wextra -std=c++98 -g
 AR = ar rcs
 
 # Colors
