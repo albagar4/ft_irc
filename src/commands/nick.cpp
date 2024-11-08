@@ -16,12 +16,14 @@ void Server::parseNick(std::string buffer, Client &client) {
     }
     for (size_t i = 0; i < this->getMap().size(); i++) {
         if (this->map[i].getNick().compare(buffer) == 0) {
-    for (size_t i = 0; i < this->getMap().size(); i++)
-    {
-        if (this->map[i].getNick().compare(buffer) == 0){
-            print_err(this->getHostname() + " 433 " + buffer + " :Nickname is already in use");
-            return;
+            for (size_t i = 0; i < this->getMap().size(); i++) {
+                if (this->map[i].getNick().compare(buffer) == 0) {
+                    print_err(this->getHostname() + " 433 " + buffer +
+                              " :Nickname is already in use");
+                    return;
+                }
+            }
+            client.setNick(buffer);
         }
     }
-    client.setNick(buffer);
 }

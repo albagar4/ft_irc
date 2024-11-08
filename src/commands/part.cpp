@@ -35,7 +35,6 @@ static std::string rplSuccessful(Client client, Channel channel) {
     return response;
 }
 void Server::parsePart(std::string buffer, Client &client) {
-    std::cout << "Buffer is: " << buffer << std::endl;
     Channel *temp;
     size_t i;
     std::vector<std::string> tokens = split(buffer, ',');
