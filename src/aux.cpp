@@ -67,6 +67,20 @@ std::vector<std::string> split(std::string input, char delimiter) {
     return tokens;
 }
 
+std::string fixSpaces(std::string buffer) {
+    std::string params;
+    size_t space = buffer.find(" ");
+    if (space != std::string::npos) {
+        size_t startOfParams = buffer.find_first_not_of(" ", space + 1);
+        if (startOfParams != std::string::npos)
+            params = buffer.substr(startOfParams);
+        else
+            params = "";
+    } else
+        params = "";
+    return params;
+}
+
 std::map<NUM, std::string> errorMessages;
 void initializeErrorMessages() {
     errorMessages[ERR_NOSUCHNICK] = "No such nick/channel";

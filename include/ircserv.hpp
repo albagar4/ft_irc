@@ -116,6 +116,7 @@ void printConnected(Client client);
 void printDisconnected(Client client);
 void printCloseServer();
 std::vector<std::string> split(std::string input, char delimiter);
+std::string fixSpaces(std::string buffer);
 void initializeErrorMessages();
 std::string errorResponse(std::string hostname, NUM code);
 
