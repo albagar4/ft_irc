@@ -66,3 +66,86 @@ std::vector<std::string> split(std::string input, char delimiter) {
     }
     return tokens;
 }
+
+std::map<NUM, std::string> errorMessages;
+void initializeErrorMessages() {
+    errorMessages[ERR_NOSUCHNICK] = "No such nick/channel";
+    errorMessages[ERR_NOSUCHSERVER] = "No such server";
+    errorMessages[ERR_NOSUCHCHANNEL] = "No such channel";
+    errorMessages[ERR_CANNOTSENDTOCHAN] = "Cannot send to channel";
+    errorMessages[ERR_TOOMANYCHANNELS] = "You have joined too many channels";
+    errorMessages[ERR_WASNOSUCHNICK] = "There was no such nickname";
+    errorMessages[ERR_TOOMANYTARGETS] = "Duplicate recipients. No message delivered";
+    errorMessages[ERR_NOORIGIN] = "No origin specified";
+    errorMessages[ERR_NORECIPIENT] = "No recipient given (<command>)";
+    errorMessages[ERR_NOTEXTTOSEND] = "No text to send";
+    errorMessages[ERR_NOTOPLEVEL] = "No toplevel domain specified";
+    errorMessages[ERR_WILDTOPLEVEL] = "Wildcard in toplevel domain";
+    errorMessages[ERR_BADMASK] = "Bad Server/host mask";
+
+    errorMessages[ERR_UNKNOWNCOMMAND] = "Unknown command";
+    errorMessages[ERR_NOMOTD] = "MOTD File is missing";
+    errorMessages[ERR_NOADMININFO] = "No administrative info available";
+    errorMessages[ERR_FILEERROR] = "File error";
+
+    errorMessages[ERR_NONICKNAMEGIVEN] = "No nickname given";
+    errorMessages[ERR_ERRONEUSNICKNAME] = "Erroneous nickname";
+    errorMessages[ERR_NICKNAMEINUSE] = "Nickname is already in use";
+    errorMessages[ERR_NICKCOLLISION] = "Nickname collision KILL";
+    errorMessages[ERR_UNAVAILRESOURCE] = "Nick/channel is temporarily unavailable";
+
+    errorMessages[ERR_USERNOTINCHANNEL] = "They aren't on that channel";
+    errorMessages[ERR_NOTONCHANNEL] = "You're not on that channel";
+    errorMessages[ERR_USERONCHANNEL] = "User is already on that channel";
+    errorMessages[ERR_NOLOGIN] = "User not logged in";
+    errorMessages[ERR_SUMMONDISABLED] = "SUMMON has been disabled";
+    errorMessages[ERR_USERSDISABLED] = "USERS has been disabled";
+
+    errorMessages[ERR_NOTREGISTERED] = "You have not registered";
+    errorMessages[ERR_NEEDMOREPARAMS] = "Not enough parameters";
+    errorMessages[ERR_ALREADYREGISTERED] = "You may not reregister";
+    errorMessages[ERR_PASSWDMISMATCH] = "Password incorrect";
+    errorMessages[ERR_YOUREBANNEDCREEP] = "You are banned from this server";
+    errorMessages[ERR_YOUWILLBEBANNED] = "You will be banned";
+    errorMessages[ERR_KEYSET] = "Channel key already set";
+    errorMessages[ERR_CHANNELISFULL] = "Cannot join channel (+l)";
+    errorMessages[ERR_UNKNOWNMODE] = "Unknown mode character";
+    errorMessages[ERR_INVITEONLYCHAN] = "Cannot join channel (+i)";
+    errorMessages[ERR_BANNEDFROMCHAN] = "Cannot join channel (+b)";
+    errorMessages[ERR_BADCHANNELKEY] = "Cannot join channel (+k)";
+    errorMessages[ERR_BADCHANMASK] = "Bad Channel Mask";
+    errorMessages[ERR_NOCHANMODES] = "Channel doesn't support modes";
+    errorMessages[ERR_BANLISTFULL] = "Ban list is full";
+
+    errorMessages[ERR_NOPRIVILEGES] = "Permission Denied- You're not an IRC operator";
+    errorMessages[ERR_CHANOPRIVSNEEDED] = "You're not channel operator";
+    errorMessages[ERR_CANTKILLSERVER] = "You can't kill a server!";
+    errorMessages[ERR_RESTRICTED] = "Your connection is restricted!";
+    errorMessages[ERR_UNIQOPRIVSNEEDED] = "You're not the original channel operator";
+    errorMessages[ERR_NOOPERHOST] = "No O-lines for your host";
+
+    errorMessages[ERR_UMODEUNKNOWNFLAG] = "Unknown MODE flag";
+    errorMessages[ERR_USERSDONTMATCH] = "Cannot change mode for other users";
+
+    // Additional error codes
+    errorMessages[ERR_HELPNOTFOUND] = "Help not found";
+    errorMessages[ERR_INVALIDCAPCMD] = "Invalid CAP command";
+    errorMessages[ERR_NICKLOCKED] = "You must use a registered nick to perform this command";
+    errorMessages[ERR_SASLFAIL] = "SASL authentication failed";
+    errorMessages[ERR_SASLTOOLONG] = "SASL message too long";
+    errorMessages[ERR_SASLABORTED] = "SASL authentication aborted";
+    errorMessages[ERR_SASLALREADY] = "You have already authenticated using SASL";
+
+    errorMessages[ERR_UNKNOWN] = "Unknown error";
+}
+
+std::string errorResponse(std::string hostname, NUM code) {
+    std::ostringstream ss;
+    ss << code;
+    std::string response = ":";
+    response += hostname + " ";
+    response += ss.str() + " :";
+    response += errorMessages[code];
+    response += "\r\n";
+    return response;
+}
