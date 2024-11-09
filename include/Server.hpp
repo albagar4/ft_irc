@@ -14,16 +14,6 @@
 #include <Client.hpp>
 #include <ircserv.hpp>
 
-enum NUM {
-    ERR_NEEDMOREPARAMS = 461,
-    ERR_ALREADYREGISTERED = 462,
-    ERR_PASSWDMISMATCH = 464,
-    ERR_NOTREGISTERED = 451,
-    ERR_UNKNOWNCOMMAND = 421,
-};
-
-extern std::map<NUM, std::string> errorMessages;
-
 class Server {
    private:
     typedef void (Server::*authFunctions)(std::string, Client &);
@@ -31,7 +21,7 @@ class Server {
     authFunctions authentification[4];
     cmdFunctions commands[8];
 
-    Server() {};
+    Server(){};
     void createServerSocket(void);
     std::string password;
     int port;
@@ -69,6 +59,8 @@ class Server {
     Channel *findChannel(std::string name);
     void closeChannel(Channel channel);
     // Commands
+    void findCommand(std::string buffer, Client &client);
+    void sendResponse();
     void parseCap(std::string buffer, Client &client);
     void parsePass(std::string buffer, Client &client);
     void parseNick(std::string buffer, Client &client);
@@ -83,7 +75,4 @@ class Server {
     void parseQuit(std::string buffer, Client &client);
 };
 
-void initializeErrorMessages();
-
-std::ostream &operator<<(std::ostream &os, const Server &server);
 #endif

@@ -1,7 +1,5 @@
 #include <Server.hpp>
 
-#include "ircserv.hpp"
-
 void Server::createServerSocket() {
     // Crear el socket del servidor
     this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -139,49 +137,61 @@ void Server::manageUpdates(Client& client) {
     if (bytes > 0) this->parseCommands(buffer, client);
 }
 
+void Server::findCommand(std::string buffer, Client& client) {
+    if (!buffer.empty() && buffer[buffer.size() - 1] == '\n') {
+        buffer.erase(buffer.size() - 1);
+    }
+    if (!buffer.empty() && buffer[buffer.size() - 1] == '\r') {
+        buffer.erase(buffer.size() - 1);
+    }
+    std::string title = buffer.substr(0, buffer.find(" "));
+    if (client.getAuth() == false) {
+        std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
+        for (int j = 0; j < 4; j++) {
+            if (title == commandArray[j]) {
+                (this->*authentification[j])(buffer.substr(buffer.find(" ") + 1).c_str(), client);
+            }
+        }
+        // MENSAJE DE ERROR DE COMANDO
+    } else {
+        std::string commandArray[8] = {"JOIN",  "PART", "KICK",    "INVITE",
+                                       "TOPIC", "MODE", "PRIVMSG", "QUIT"};
+        for (int j = 0; j < 8; j++) {
+            if (title == commandArray[j]) {
+                std::string params;
+                size_t space = buffer.find(" ");
+                if (space != std::string::npos) {
+                    size_t startOfParams = buffer.find_first_not_of(" ", space + 1);
+                    if (startOfParams != std::string::npos)
+                        params = buffer.substr(startOfParams);
+                    else
+                        params = "";
+                } else
+                    params = "";
+                (this->*commands[j])(params, client);
+                break;
+            }
+        }
+        // mensaje con la lista de usos y comandos disponibles
+    }
+}
+
+void Server::sendResponse() {
+    for (std::map<int, Client>::iterator it = this->map.begin(); it != this->map.end(); it++) {
+        if (!it->second.getResponse().empty()) {
+            send(it->first, it->second.getResponse().c_str(), it->second.getResponse().size(), 0);
+            it->second.setResponse("");
+        }
+    }
+}
+
 void Server::parseCommands(char* buffer, Client& client) {
-    client.setNick("alvega-g");
-    client.setUser("alvega-g");
-    client.setHostname();
     std::string buff(buffer);
     std::vector<std::string> lines = split(buff, '\n');
 
     for (size_t i = 0; i < lines.size(); i++) {
-        if (!lines[i].empty() && lines[i][lines[i].size() - 1] == '\n') {
-            lines[i].erase(lines[i].size() - 1);
-        }
-        if (!lines[i].empty() && lines[i][lines[i].size() - 1] == '\r') {
-            lines[i].erase(lines[i].size() - 1);
-        }
-        std::string title = lines[i].substr(0, buff.find(" "));
-        if (client.getAuth() == true) {  // Hardcodeito bueno para desarrollar PART
-
-            std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
-            for (int j = 0; j < 4; j++) {
-                if (title == commandArray[j]) {
-                    (this->*authentification[j])(lines[i].substr(lines[i].find(" ") + 1).c_str(),
-                                                 client);
-                }
-            }
-            // MENSAJE DE ERROR DE COMANDO
-        } else {
-            std::string commandArray[8] = {"JOIN",  "PART", "KICK",    "INVITE",
-                                           "TOPIC", "MODE", "PRIVMSG", "QUIT"};
-            for (int j = 0; j < 8; j++) {
-                if (title == commandArray[j]) {
-                    (this->*commands[j])(lines[i].substr(lines[i].find(" ") + 1).c_str(), client);
-                    break;
-                }
-            }
-            // mensaje con la lista de usos y comandos disponibles
-        }
-        for (std::map<int, Client>::iterator it = this->map.begin(); it != this->map.end(); it++) {
-            if (!it->second.getResponse().empty()) {
-                send(it->first, it->second.getResponse().c_str(), it->second.getResponse().size(),
-                     0);
-                it->second.setResponse("");
-            }
-        }
+        findCommand(lines[i], client);
+        sendResponse();
     }
 }
 
@@ -196,15 +206,6 @@ void Server::disconnectClient(Client& client) {
             break;
         }
     }
-}
-
-std::ostream& operator<<(std::ostream& os, const Server& server) {
-    os << "* Server information *";
-    os << "\nPassword: " << server.getPassword();
-    os << "\nPort: " << server.getPort();
-    os << "\nSocket: " << server.getServerSocket();
-    os << "\nCurrent amount of clients: " << server.getMap().size();
-    return (os);
 }
 
 void Server::printChannels() {
@@ -237,14 +238,4 @@ void Server::closeChannel(Channel channel) {
             return;
         }
     }
-}
-
-std::map<NUM, std::string> errorMessages;
-
-void initializeErrorMessages() {
-    errorMessages[ERR_NEEDMOREPARAMS] = "Not enough parameters";
-    errorMessages[ERR_ALREADYREGISTERED] = "You may not reregister";
-    errorMessages[ERR_PASSWDMISMATCH] = "Password incorrect";
-    errorMessages[ERR_NOTREGISTERED] = "You have not registered";
-    errorMessages[ERR_UNKNOWNCOMMAND] = "Unknown command";
 }

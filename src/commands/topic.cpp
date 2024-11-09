@@ -67,6 +67,10 @@ static std::string rpl_Successful(Client client, Channel channel) {
     return response;
 }
 
+// static std::string errorReply() {
+//   errorMessages[]
+// }
+
 void Server::parseTopic(std::string buffer, Client &client) {
     Channel *temp;
     std::string channelName, topic;

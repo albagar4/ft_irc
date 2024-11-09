@@ -1,6 +1,7 @@
 #include <Client.hpp>
 #include <Server.hpp>
 #include <ircserv.hpp>
+#include <locale>
 
 static std::string err_NeedMoreParams(Server server, Client client) {
     std::string response = ":" + server.getHostname() + " 461 ";
@@ -60,9 +61,11 @@ static std::string rpl_Successful(Server server, Client client, Channel channel)
     response += rpl_EndOfNames(server, client, channel);
     return response;
 }
+
 void Server::parseJoin(std::string buffer, Client &client) {
     Channel *temp;
     try {
+        std::cout << "buffer is ." << buffer << "." << std::endl;
         if (buffer.empty()) throw 461;
         std::vector<std::string> tokens = split(buffer, ',');
         for (size_t i = 0; i < tokens.size(); i++) {
