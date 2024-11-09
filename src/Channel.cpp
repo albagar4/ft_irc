@@ -1,4 +1,5 @@
 #include <Channel.hpp>
+#include <algorithm>
 
 Channel::Channel() {
     this->name = "";
@@ -57,10 +58,28 @@ void Channel::printClients() {
         std::cout << ",";
     }
 }
-
+bool Channel::isClient(Client client) const {
+    for (size_t i = 0; i < this->clients.size(); i++) {
+        if (client.getFd() == this->clients[i].getFd()) return true;
+    }
+    return false;
+}
 bool Channel::isOperator(Client client) const {
     for (size_t i = 0; i < this->operators.size(); i++) {
         if (client.getFd() == this->operators[i].getFd()) return true;
     }
     return false;
+}
+bool Channel::isEmpty() const {
+    if (this->clients.empty() == true) return true;
+    return false;
+}
+
+void Channel::disconnectClient(Client &client) {
+    for (size_t i = 0; i < this->clients.size(); i++) {
+        if (this->clients[i].getFd() == client.getFd()) {
+            this->clients.erase(this->clients.begin() + i);
+            return;
+        }
+    }
 }
