@@ -149,7 +149,17 @@ void Server::findCommand(std::string buffer, Client& client) {
         std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
         for (int j = 0; j < 4; j++) {
             if (title == commandArray[j]) {
-                (this->*authentification[j])(buffer.substr(buffer.find(" ") + 1).c_str(), client);
+                std::string params;
+                size_t space = buffer.find(" ");
+                if (space != std::string::npos) {
+                    size_t startOfParams = buffer.find_first_not_of(" ", space + 1);
+                    if (startOfParams != std::string::npos)
+                        params = buffer.substr(startOfParams);
+                    else
+                        params = "";
+                } else
+                    params = "";
+                (this->*authentification[j])(params, client);
             }
         }
         // MENSAJE DE ERROR DE COMANDO

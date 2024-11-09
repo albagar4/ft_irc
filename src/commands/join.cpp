@@ -1,7 +1,6 @@
 #include <Client.hpp>
 #include <Server.hpp>
 #include <ircserv.hpp>
-#include <locale>
 
 static std::string err_NeedMoreParams(Server server, Client client) {
     std::string response = ":" + server.getHostname() + " 461 ";
