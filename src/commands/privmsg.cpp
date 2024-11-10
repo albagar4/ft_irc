@@ -2,7 +2,7 @@
 #include <Server.hpp>
 #include <ircserv.hpp>
 
-// Falta el error 404 ERR_CANNOTSENDTOCHAN, ERR_NOTOPLEVEL (413), ERR_WILDTOPLEVEL (414), RPL_AWAY (301)
+// HAY QUE VER SI FUNCIONA
 
 void Server::parsePrivMsg(std::string buffer, Client &client) {
     std::vector<std::string> tokens = split(buffer, ',');
@@ -24,6 +24,15 @@ void Server::parsePrivMsg(std::string buffer, Client &client) {
             if (target[0] == '#'){
                 Channel *temp = this->findChannel(target);
                 if (!temp) throw 403;
+                for (unsigned long i = 0; i < temp->getClients().size(); i++)
+                {
+                    if (temp->getClients()[i].getNick().compare(client.getNick()) == 0){
+                        target = true;
+                        break ;
+                    }
+                }
+                if (target == false) throw 404;
+                client.setResponse(":" + client.getNick() + "!" + client.getUser() + "@localhost PRIVMSG " + target + " " + message + "\r\n");
             }
             else{
                 if (target == "bot-as") this->parseBot(message, client);
@@ -37,14 +46,14 @@ void Server::parsePrivMsg(std::string buffer, Client &client) {
                         }
                     }
                     if (target == false) throw 401;
-                }
+                    client.setResponse(":" + client.getNick() + "!" + client.getUser() + "@localhost PRIVMSG " + target + " " + message + "\r\n");
             }
         }
     } catch (int code) {
         if (code == 461)
             client.setResponse(":" + this->getHostname() + " 461 " + client.getNick() + " PRIVMSG :No such nick/channel\r\n");
         if (code == 407)
-            client.setResponse(":" + this->getHostname() + " 407 " + client.getNick() + buffer.substr(0, find(':')) + ":Duplicate recipients. No message delivered\r\n"); //ESTE TENGO QUE REPASARLO BIEN
+            client.setResponse(":" + this->getHostname() + " 407 " + client.getNick() + " " + buffer.substr(0, find(':')) + ":Duplicate recipients. No message delivered\r\n"); //ESTE TENGO QUE REPASARLO BIEN
         if (code == 411)
             client.setResponse(":" + this->getHostname() + "411" + client.getNick() + " :No recipient given");
         if (code == 412)
@@ -53,6 +62,8 @@ void Server::parsePrivMsg(std::string buffer, Client &client) {
             client.setResponse(":" + this->getHostname() + "403" + client.getNick() + " " + target + " :No such channel\r\n");
         if (code == 401)
             client.setResponse(":" + this->getHostname() + " 401 " + client.getNick() + " " + target + " :No such nick/channel\r\n");
-        std::cout << client.getResponse() << std::endl;
+        if (code == 404)
+            client.setResponse(":" + this->getHostname() + " 404 " + client.getNick() + " " + target + " :Cannot send to channel\r\n");
     }
+    std::cout << client.getResponse() << std::endl;
 }
