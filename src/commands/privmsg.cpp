@@ -18,7 +18,7 @@ void Server::parsePrivMsg(std::string buffer, Client &client) {
             if (buffer.find(':') != buffer.npos) throw 411;
             else throw 412;
         }
-        for (i = 0; i < tokens.size(); i++) {
+        //for (i = 0; i < tokens.size(); i++) {
             target = tokens[i].substr(0, tokens[i].find(" "));
             message = tokens[i].substr(tokens[i].find(" ") + 1, tokens[i].size() - 1);
             if (target[0] == '#'){
@@ -47,8 +47,9 @@ void Server::parsePrivMsg(std::string buffer, Client &client) {
                     }
                     if (target == false) throw 401;
                     client.setResponse(":" + client.getNick() + "!" + client.getUser() + "@localhost PRIVMSG " + target + " " + message + "\r\n");
+                }
             }
-        }
+        //}
     } catch (int code) {
         if (code == 461)
             client.setResponse(":" + this->getHostname() + " 461 " + client.getNick() + " PRIVMSG :No such nick/channel\r\n");
@@ -66,4 +67,4 @@ void Server::parsePrivMsg(std::string buffer, Client &client) {
             client.setResponse(":" + this->getHostname() + " 404 " + client.getNick() + " " + target + " :Cannot send to channel\r\n");
     }
     std::cout << client.getResponse() << std::endl;
-}
+ }
