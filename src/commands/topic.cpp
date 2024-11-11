@@ -67,10 +67,6 @@ static std::string rpl_Successful(Client client, Channel channel) {
     return response;
 }
 
-// static std::string errorReply() {
-//   errorMessages[]
-// }
-
 void Server::parseTopic(std::string buffer, Client &client) {
     Channel *temp;
     std::string channelName, topic;
@@ -80,7 +76,7 @@ void Server::parseTopic(std::string buffer, Client &client) {
         if (channelName.size() == buffer.size())
             topic = "";
         else
-            topic = buffer.substr(buffer.find(" ") + 2, buffer.size() - 1);
+            topic = buffer.substr(buffer.find(" ") + 1, buffer.size() - 1);
         temp = this->findChannel(channelName);
         if (!temp) throw 403;
         if (!temp->isClient(client)) throw 442;
@@ -91,6 +87,7 @@ void Server::parseTopic(std::string buffer, Client &client) {
                 throw 332;
         } else {
             if (!temp->isOperator(client)) throw 482;
+            topic.erase(topic.begin());
             temp->setTopic(topic);
             throw 0;
         }
