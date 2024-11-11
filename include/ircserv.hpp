@@ -33,6 +33,9 @@
 #define WHITE "\033[37m"   /* White */
 
 enum NUM {
+    SUCCESS = 0,
+    RPL_NOTOPIC = 331,
+    RPL_TOPIC = 332,
     ERR_NOSUCHNICK = 401,        // "<nickname> :No such nick/channel"
     ERR_NOSUCHSERVER = 402,      // "<server name> :No such server"
     ERR_NOSUCHCHANNEL = 403,     // "<channel name> :No such channel"
@@ -118,6 +121,14 @@ void printCloseServer();
 std::vector<std::string> split(std::string input, char delimiter);
 std::string fixSpaces(std::string buffer);
 void initializeErrorMessages();
-std::string errorResponse(std::string hostname, NUM code);
+/**
+ * Sets the response of a client with a given error
+ *
+ * @code error code
+ * @hostname hostname of server
+ * @client client
+ * @target optional argument, it can be a command like JOIN or PART, or a channel like #general
+ */
+void err(NUM code, std::string hostname, Client& client, std::string target = "");
 
 #endif

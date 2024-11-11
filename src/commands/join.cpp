@@ -2,29 +2,6 @@
 #include <Server.hpp>
 #include <ircserv.hpp>
 
-static std::string err_NeedMoreParams(Server server, Client client) {
-    std::string response = ":" + server.getHostname() + " 461 ";
-    response += client.getNick();
-    response += " JOIN :Not enough parameters";
-    response += "\r\n";
-    return response;
-}
-static std::string err_ChannelIsFull(Server server, Client client, Channel channel) {
-    std::string response = ":" + server.getHostname() + " 471 ";
-    response += client.getNick() + " ";
-    response += channel.getName();
-    response += " :Cannot join channel (+l)";
-    response += "\r\n";
-    return response;
-}
-// static std::string err_InviteOnlyChan(Server server, Client client, Channel channel) {
-//     std::string response =":" +  server.getHostname() + " 473 ";
-//     response += client.getNick() + " ";
-//     response += channel.getName();
-//     response += " :Cannot join channel (+i)";
-//     response += "\r\n";
-//     return response;
-// }
 static std::string rpl_NamReply(Server server, Client client, Channel channel) {
     std::string response = ":" + server.getHostname() + " 353 ";
     response += client.getNick() + " ";
@@ -64,7 +41,7 @@ static std::string rpl_Successful(Server server, Client client, Channel channel)
 void Server::parseJoin(std::string buffer, Client &client) {
     Channel *temp;
     try {
-        if (buffer.empty()) throw 461;
+        if (buffer.empty()) throw ERR_NEEDMOREPARAMS;
         std::vector<std::string> tokens = split(buffer, ',');
         for (size_t i = 0; i < tokens.size(); i++) {
             try {
@@ -81,18 +58,26 @@ void Server::parseJoin(std::string buffer, Client &client) {
                     this->channels.push_back(newChannel);
                 } else {
                     temp = this->findChannel(tokens[i]);
-                    if ((size_t)temp->getUserLimit() == temp->getClients().size()) throw 471;
-                    // Check if user is invited: if (temp->getInviteOnly() == true && ) throw 473;
+                    if ((size_t)temp->getUserLimit() == temp->getClients().size())
+                        throw ERR_CHANNELISFULL;
+                    // Check if user is invited: if (temp->getInviteOnly() == true && ) throw
+                    // ERR_INVITEONLYCHAN;
                     temp->addClient(client);
                 }
-                client.setResponse(rpl_Successful(*this, client, *this->findChannel(tokens[i])));
-            } catch (int code) {
-                if (code == 471) client.setResponse(err_ChannelIsFull(*this, client, *temp));
-                // else if (code == 473)
-                //     client.setResponse(err_InviteOnlyChan(*this, client, temp));
+                throw SUCCESS;
+            } catch (NUM code) {
+                if (code == SUCCESS)
+                    client.setResponse(
+                        client.getResponse() +
+                        rpl_Successful(*this, client, *this->findChannel(tokens[i])));
+                else if (code == ERR_CHANNELISFULL)
+                    err(ERR_CHANNELISFULL, this->getHostname(), client, temp->getName());
+                // else if (code == ERR_INVITEONLYCHAN)
+                //  err(ERR_INVITEONLYCHAN, this->getHostname(), client, temp->getName());
             }
         }
-    } catch (int code) {
-        if (code == 461) client.setResponse(err_NeedMoreParams(*this, client));
+    } catch (NUM code) {
+        if (code == ERR_NEEDMOREPARAMS)
+            err(ERR_NEEDMOREPARAMS, this->getHostname(), client, "JOIN");
     }
 }

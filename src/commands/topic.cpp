@@ -2,42 +2,6 @@
 #include <Server.hpp>
 #include <ircserv.hpp>
 
-static std::string err_NeedMoreParams(Server server, Client client) {
-    std::string response = ":" + server.getHostname() + " 461 ";
-    response += client.getNick();
-    response += " TOPIC :Not enough parameters";
-    response += "\r\n";
-    return response;
-}
-static std::string err_NoSuchChannel(Server server, Client client, std::string channel) {
-    std::string response = ":" + server.getHostname() + " 403 ";
-    response += client.getNick();
-    response += " ";
-    response += channel;
-    response += " :No such channel";
-    response += "\r\n";
-    return response;
-}
-static std::string err_NotOnChannel(Server server, Client client, Channel channel) {
-    std::string response = ":" + server.getHostname() + " 442 ";
-    response += client.getNick();
-    response += " ";
-    response += channel.getName();
-    response += " :You're not on that channel";
-    response += "\r\n";
-    return response;
-}
-
-static std::string err_ChanOpPrivsNeeded(Server server, Client client, Channel channel) {
-    std::string response = ":" + server.getHostname() + " 482 ";
-    response += client.getNick();
-    response += " ";
-    response += channel.getName();
-    response += " :You're not channel operator";
-    response += "\r\n";
-    return response;
-}
-
 static std::string rpl_NoTopic(Server server, Client client, Channel channel) {
     std::string response = ":" + server.getHostname() + " 331 ";
     response += client.getNick();
@@ -72,39 +36,39 @@ void Server::parseTopic(std::string buffer, Client &client) {
     std::string channelName, topic;
     try {
         channelName = buffer.substr(0, buffer.find(" "));
-        if (channelName.empty()) throw 461;
+        if (channelName.empty()) throw ERR_NEEDMOREPARAMS;
         if (channelName.size() == buffer.size())
             topic = "";
         else
             topic = buffer.substr(buffer.find(" ") + 1, buffer.size() - 1);
         temp = this->findChannel(channelName);
-        if (!temp) throw 403;
-        if (!temp->isClient(client)) throw 442;
+        if (!temp) throw ERR_NOSUCHCHANNEL;
+        if (!temp->isClient(client)) throw ERR_NOTONCHANNEL;
         if (topic.empty()) {
             if (temp->getTopic().empty())
-                throw 331;
+                throw RPL_NOTOPIC;
             else
-                throw 332;
+                throw RPL_TOPIC;
         } else {
-            if (!temp->isOperator(client)) throw 482;
+            if (!temp->isOperator(client)) throw ERR_CHANOPRIVSNEEDED;
             topic.erase(topic.begin());
             temp->setTopic(topic);
-            throw 0;
+            throw SUCCESS;
         }
-    } catch (int code) {
-        if (code == 0)
-            client.setResponse(rpl_Successful(client, *temp));
-        else if (code == 331)
-            client.setResponse(rpl_NoTopic(*this, client, *temp));
-        else if (code == 332)
-            client.setResponse(rpl_Topic(*this, client, *temp));
-        else if (code == 403)
-            client.setResponse(err_NoSuchChannel(*this, client, channelName));
-        else if (code == 442)
-            client.setResponse(err_NotOnChannel(*this, client, *temp));
-        else if (code == 461)
-            client.setResponse(err_NeedMoreParams(*this, client));
-        else if (code == 482)
-            client.setResponse(err_ChanOpPrivsNeeded(*this, client, *temp));
+    } catch (NUM code) {
+        if (code == SUCCESS)
+            client.setResponse(client.getResponse() + rpl_Successful(client, *temp));
+        else if (code == RPL_NOTOPIC)
+            client.setResponse(client.getResponse() + rpl_NoTopic(*this, client, *temp));
+        else if (code == RPL_TOPIC)
+            client.setResponse(client.getResponse() + rpl_Topic(*this, client, *temp));
+        else if (code == ERR_NOSUCHCHANNEL)
+            err(ERR_NOSUCHCHANNEL, this->getHostname(), client, channelName);
+        else if (code == ERR_NOTONCHANNEL)
+            err(ERR_NOTONCHANNEL, this->getHostname(), client, temp->getName());
+        else if (code == ERR_NEEDMOREPARAMS)
+            err(ERR_NEEDMOREPARAMS, this->getHostname(), client, "TOPIC");
+        else if (code == ERR_CHANOPRIVSNEEDED)
+            err(ERR_CHANOPRIVSNEEDED, this->getHostname(), client, temp->getName());
     }
 }

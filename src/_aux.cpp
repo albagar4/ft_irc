@@ -153,13 +153,12 @@ void initializeErrorMessages() {
     errorMessages[ERR_UNKNOWN] = "Unknown error";
 }
 
-std::string errorResponse(std::string hostname, NUM code) {
+void err(NUM code, std::string hostname, Client& client, std::string target) {
     std::ostringstream ss;
     ss << code;
-    std::string response = ":";
-    response += hostname + " ";
-    response += ss.str() + " :";
-    response += errorMessages[code];
-    response += "\r\n";
-    return response;
+    std::string response = ":" + hostname + " " + ss.str() + " " + client.getNick();
+    if (!target.empty()) response += " " + target;
+    response += " :" + errorMessages[code] + "\r\n";
+
+    client.setResponse(client.getResponse() + response);
 }
