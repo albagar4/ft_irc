@@ -73,6 +73,7 @@ class Server {
     void parseMode(std::string buffer, Client &client);
     void parsePrivMsg(std::string buffer, Client &client);
     void parseQuit(std::string buffer, Client &client);
+    void parseBot(std::string buffer, Client &client);
 };
 
 #endif
