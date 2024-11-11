@@ -1,13 +1,19 @@
 #include <Channel.hpp>
-#include <algorithm>
 
 Channel::Channel() {
     this->name = "";
     this->topic = "";
+    this->password = "";
+    this->userLimit = 99;
+    this->inviteOnly = false;
 }
+
 Channel::Channel(std::string name, std::string topic) {
     this->name = name;
     this->topic = topic;
+    this->password = "";
+    this->userLimit = 99;
+    this->inviteOnly = false;
 }
 Channel::~Channel() {}
 

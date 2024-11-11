@@ -221,6 +221,12 @@ Channel* Server::findChannel(std::string name) {
     }
     return NULL;
 }
+Client* Server::findClient(std::string name) {
+    for (std::map<int, Client>::iterator it = this->map.begin(); it != this->map.end(); it++) {
+        if (it->second.getNick() == name) return &it->second;
+    }
+    return NULL;
+}
 void Server::closeChannel(Channel channel) {
     for (size_t i = 0; i < this->channels.size(); i++) {
         if (this->channels[i].getName() == channel.getName()) {
