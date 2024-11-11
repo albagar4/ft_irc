@@ -5,6 +5,7 @@
 void Server::parseNick(std::string buffer, Client &client) {
     ft_print("Inside Nick: ");
     ft_print(buffer);
+
     try {
         if (buffer.empty()) throw 431;
         if (buffer.find('#') != buffer.npos || buffer.find(':') != buffer.npos || buffer.find(' ') != buffer.npos || isdigit(buffer[0])) throw 432;
