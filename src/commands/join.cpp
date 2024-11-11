@@ -64,36 +64,35 @@ static std::string rpl_Successful(Server server, Client client, Channel channel)
 void Server::parseJoin(std::string buffer, Client &client) {
     Channel *temp;
     try {
-        std::cout << "buffer is ." << buffer << "." << std::endl;
         if (buffer.empty()) throw 461;
         std::vector<std::string> tokens = split(buffer, ',');
         for (size_t i = 0; i < tokens.size(); i++) {
-            size_t colonPos = tokens[i].find_first_of(":");
-            if (tokens.size() > 1 && colonPos != std::string::npos) throw 461;
-            std::string topic = tokens[i].substr(colonPos + 1, tokens[i].size());
-            if (topic != tokens[i]) {
-                tokens[i] = tokens[i].substr(0, colonPos - 1);
-            } else {
-                topic = "";
+            try {
+                size_t colonPos = tokens[i].find_first_of(":");
+                std::string topic = tokens[i].substr(colonPos + 1, tokens[i].size());
+                if (topic != tokens[i]) {
+                    tokens[i] = tokens[i].substr(0, colonPos - 1);
+                } else {
+                    topic = "";
+                }
+                if (isNewChannel(tokens[i]) == true) {
+                    Channel newChannel(tokens[i], topic);
+                    newChannel.addClient(client);
+                    this->channels.push_back(newChannel);
+                } else {
+                    temp = this->findChannel(tokens[i]);
+                    if ((size_t)temp->getUserLimit() == temp->getClients().size()) throw 471;
+                    // Check if user is invited: if (temp->getInviteOnly() == true && ) throw 473;
+                    temp->addClient(client);
+                }
+                client.setResponse(rpl_Successful(*this, client, *this->findChannel(tokens[i])));
+            } catch (int code) {
+                if (code == 471) client.setResponse(err_ChannelIsFull(*this, client, *temp));
+                // else if (code == 473)
+                //     client.setResponse(err_InviteOnlyChan(*this, client, temp));
             }
-            if (isNewChannel(tokens[i]) == true) {
-                Channel newChannel(tokens[i], topic);
-                newChannel.addClient(client);
-                this->channels.push_back(newChannel);
-            } else {
-                temp = this->findChannel(tokens[i]);
-                if ((size_t)temp->getUserLimit() == temp->getClients().size()) throw 471;
-                // Check if user is invited: if (temp->getInviteOnly() == true && ) throw 473;
-                temp->addClient(client);
-            }
-            client.setResponse(rpl_Successful(*this, client, *this->findChannel(tokens[i])));
         }
     } catch (int code) {
-        if (code == 461)
-            client.setResponse(err_NeedMoreParams(*this, client));
-        else if (code == 471)
-            client.setResponse(err_ChannelIsFull(*this, client, *temp));
-        // else if (code == 473)
-        //  client.setResponse(err_InviteOnlyChan(*this, client, temp));
+        if (code == 461) client.setResponse(err_NeedMoreParams(*this, client));
     }
 }
