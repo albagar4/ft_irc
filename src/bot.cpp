@@ -4,13 +4,15 @@
 #include <Channel.hpp>
 
 static void botPlay(Client &client){
-    std::string message = ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNickname() + " :Welcome to Russian Roulette!\n";
+    std::string message = ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :Welcome to Russian Roulette!\n";
+    std::string itoa = "";
     int player;
     int bot;
     
     srand(time(NULL));
-    for (int i = 6; i > 0; i++){
-        message += "You have a 1 in " + i + " chance of dying. Let's spin the gun chamber...\n";
+    for (int i = 6; i > 1; i--){
+        itoa[0] = (i % 10) + '0';
+        message += "You have a 1 in " + itoa + " chance of dying. Let's spin the gun chamber...\n";
         player = rand() % i + 1;
         bot = rand() % i + 1;
         if (player == 1) message += client.getNick() + " pulled the trigger and... *BANG*! You're dead! XP\n";
@@ -28,7 +30,7 @@ static void botPlay(Client &client){
 }
 
 static void botTip(Client &client){
-    std::string message = ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNickname() + " :Tip of the day- ";
+    std::string message = ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :Tip of the day- ";
     int random;
 
     srand(time(NULL));
@@ -41,7 +43,7 @@ static void botTip(Client &client){
         case 3:
             message += "When life closes a door, just open it again. It’s a door. That’s how they work.\r\n"; break ;
         case 4:
-            message += "If you’re struggling to be productive, just sit and stare at the screen. You’ll look busy enough.\r\n" break ;
+            message += "If you’re struggling to be productive, just sit and stare at the screen. You’ll look busy enough.\r\n"; break ;
         case 5:
             message += "If you’re waiting for a sign, this isn’t it. Maybe try again tomorrow?\r\n"; break ;
         case 6:
@@ -61,26 +63,21 @@ static void botTip(Client &client){
 // PRIVMSG "bot-as :<mode>"
 void Server::parseBot(std::string buffer, Client &client){
     std::string mode[3] = { ":HELP", ":PLAY", ":TIP"};
+    unsigned long i;
 
     ft_print("Inside Bot: ");
     ft_print(buffer);
-    try {
-        if (buffer.find(' ') != buffer.npos) throw 1;
-        buffer = buffer.toUpper();
-        for (int i = 0; i < 3; i++) if (buffer == mode[i]) break ;
-        switch (i){
-            case 0:
-                    client.setResponse(":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNickname() + " :Ask me 'PLAY' or 'TIP'\r\n"); break ;
-            case 1:
-                    botPlay(client); break ;
-            case 2:
-                    botTip(client); break ;
-            default:
-                    client.setReponse(":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNickname() + " :Invalid command. Ask me 'HELP' for more info\r\n");
-        }
-    } catch (int code) {
-        if (code == 1)
-            client.setResponse(":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNickname() + " :Extra parameters\r\n");
+    for (i = 0; i < buffer.size(); i++) buffer[i] = toupper(buffer[i]);
+    for (i = 0; i < 3; i++) if (buffer == mode[i]) break ;
+    switch (i){
+        case 0:
+                client.setResponse(":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :Ask me 'PLAY' or 'TIP'\r\n"); break ;
+        case 1:
+                botPlay(client); break ;
+        case 2:
+                botTip(client); break ;
+        default:
+                client.setResponse(":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :Invalid command. Ask me 'HELP' for more info\r\n");
     }
     std::cout << client.getResponse() << std::endl;
 }
