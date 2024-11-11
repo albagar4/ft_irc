@@ -56,17 +56,32 @@ void printLaunchServer(const Server& server) {
     std::cout << "\nHostname: \t" << server.getHostname();
     std::cout << RESET << std::endl;
 }
+// std::vector<std::string> split(std::string input, char delimiter) {
+//     std::vector<std::string> tokens;
+//     std::stringstream ss(input);
+//     std::string token;
+//
+//     while (std::getline(ss, token, delimiter)) {
+//         tokens.push_back(token);
+//     }
+//     return tokens;
+// }
 std::vector<std::string> split(std::string input, char delimiter) {
     std::vector<std::string> tokens;
     std::stringstream ss(input);
     std::string token;
 
     while (std::getline(ss, token, delimiter)) {
+        // Check if token starts with ':'
+        if (!token.empty() && token[0] == ':') {
+            // Add the remaining part of the string as one token (remove the leading ':')
+            tokens.push_back(token.substr(1) + delimiter + ss.str().substr(ss.tellg()));
+            break;
+        }
         tokens.push_back(token);
     }
     return tokens;
 }
-
 std::string fixSpaces(std::string buffer) {
     std::string params;
     size_t space = buffer.find(" ");

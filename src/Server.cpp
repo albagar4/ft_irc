@@ -145,7 +145,7 @@ void Server::findCommand(std::string buffer, Client& client) {
         buffer.erase(buffer.size() - 1);
     }
     std::string title = buffer.substr(0, buffer.find(" "));
-    if (client.getAuth() == true) {  // Harcodeito
+    if (client.getAuth() == false) {
         std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
         for (int j = 0; j < 4; j++) {
             if (title == commandArray[j]) {
@@ -176,10 +176,6 @@ void Server::sendResponse() {
 }
 
 void Server::parseCommands(char* buffer, Client& client) {
-    // Harcodeito para testear
-    client.setNick("alvega-g");
-    client.setUser("alvega-g");
-    client.setHostname();
     std::string buff(buffer);
     std::vector<std::string> lines = split(buff, '\n');
 
@@ -222,6 +218,12 @@ bool Server::isNewChannel(std::string name) {
 Channel* Server::findChannel(std::string name) {
     for (size_t i = 0; i < this->channels.size(); i++) {
         if (this->channels[i].getName() == name) return &this->channels[i];
+    }
+    return NULL;
+}
+Client* Server::findClient(std::string name) {
+    for (std::map<int, Client>::iterator it = this->map.begin(); it != this->map.end(); it++) {
+        if (it->second.getNick() == name) return &it->second;
     }
     return NULL;
 }

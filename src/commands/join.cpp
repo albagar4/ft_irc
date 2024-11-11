@@ -58,6 +58,7 @@ void Server::parseJoin(std::string buffer, Client &client) {
                     this->channels.push_back(newChannel);
                 } else {
                     temp = this->findChannel(tokens[i]);
+                    if (temp->isClient(client)) break;
                     if ((size_t)temp->getUserLimit() == temp->getClients().size())
                         throw ERR_CHANNELISFULL;
                     // Check if user is invited: if (temp->getInviteOnly() == true && ) throw
