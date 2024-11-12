@@ -61,8 +61,12 @@ void Server::parseJoin(std::string buffer, Client &client) {
                     if (temp->isClient(client)) break;
                     if ((size_t)temp->getUserLimit() == temp->getClients().size())
                         throw ERR_CHANNELISFULL;
+                    // TODO: Implementar una vez INVITE esté hecho
                     // Check if user is invited: if (temp->getInviteOnly() == true && ) throw
                     // ERR_INVITEONLYCHAN;
+                    // TODO: Comprobar una vez esté funcinal
+                    // if(!temp->getPassword().empty() && key != temp->getPassword())
+                    // throw ERR_BADCHANNELKEY;
                     temp->addClient(client);
                 }
                 throw SUCCESS;
@@ -75,6 +79,8 @@ void Server::parseJoin(std::string buffer, Client &client) {
                     err(ERR_CHANNELISFULL, this->getHostname(), client, temp->getName());
                 // else if (code == ERR_INVITEONLYCHAN)
                 //  err(ERR_INVITEONLYCHAN, this->getHostname(), client, temp->getName());
+                //  else if (code == ERR_BADCHANNELKEY)
+                //   err(ERR_BADCHANNELKEY, this->getHostname(), client, temp->getName());
             }
         }
     } catch (NUM code) {
