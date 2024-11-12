@@ -41,21 +41,21 @@ static void botTip(Client &client){
         case 2:
             message += "A balanced diet means a cookie in each hand.\r\n"; break ;
         case 3:
-            message += "When life closes a door, just open it again. It’s a door. That’s how they work.\r\n"; break ;
+            message += "When life closes a door, just open it again. It's a door. That's how they work.\r\n"; break ;
         case 4:
-            message += "If you’re struggling to be productive, just sit and stare at the screen. You’ll look busy enough.\r\n"; break ;
+            message += "If you're struggling to be productive, just sit and stare at the screen. You'll look busy enough.\r\n"; break ;
         case 5:
-            message += "If you’re waiting for a sign, this isn’t it. Maybe try again tomorrow?\r\n"; break ;
+            message += "If you're waiting for a sign, this isn't it. Maybe try again tomorrow?\r\n"; break ;
         case 6:
-            message += "Remember, it’s never too late to give up on your dreams and take a nap instead.\r\n"; break ;
+            message += "Remember, it's never too late to give up on your dreams and take a nap instead.\r\n"; break ;
         case 7:
-            message += "You’re the reason ‘Ctrl+Z’ was invented."; break ;
+            message += "You're the reason 'Ctrl+Z' was invented."; break ;
         case 8:
-            message += "Think positive! You tried your best… and it still wasn’t great, but hey, points for effort!\r\n"; break ;
+            message += "Think positive! You tried your best… and it still wasn't great, but hey, points for effort!\r\n"; break ;
         case 9:
-            message += "Remember, every great idea starts with ‘This might be stupid, but…\r\n"; break ;
+            message += "Remember, every great idea starts with 'This might be stupid, but…'\r\n"; break ;
         case 10:
-            message += "When life gives you lemons, just throw them at someone. It’s way more satisfying.\r\n"; break ;
+            message += "When life gives you lemons, just throw them at someone. It's way more satisfying.\r\n"; break ;
     }
     client.setResponse(message);
 }

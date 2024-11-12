@@ -9,12 +9,12 @@ File::File(std::string filename, std::string path, std::string senderNick, std::
     this->receiverNick = receiverNick;
 }
 File::File(const File &src){
-    if (*this != src)
+    if (this != &src)
         *this = src;
 }
 
 File    &File::operator = (const File &copy){
-    if (*this != copy)
+    if (this != &copy)
     {
         this->filename = getFilename();
         this->path = getPath();
