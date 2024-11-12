@@ -34,6 +34,7 @@
 
 enum NUM {
     SUCCESS = 0,
+    RPL_CHANNELMODEIS = 324,
     RPL_NOTOPIC = 331,
     RPL_TOPIC = 332,
     ERR_NOSUCHNICK = 401,        // "<nickname> :No such nick/channel"

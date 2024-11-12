@@ -35,8 +35,18 @@ void Channel::addOperator(Client op) {
     }
     this->operators.push_back(op);
 }
+void Channel::removeOperator(Client op) {
+    for (std::vector<Client>::iterator it = this->operators.begin(); it != this->operators.end();
+         it++) {
+        if (op.getFd() == it->getFd()) {
+            this->operators.erase(it);
+            return;
+        }
+    }
+}
 void Channel::setUserLimit(int userLimit) { this->userLimit = userLimit; }
 void Channel::setInviteOnly(bool inviteOnly) { this->inviteOnly = inviteOnly; }
+void Channel::setOpTopicOnly(bool opTopicOnly) { this->opTopicOnly = opTopicOnly; }
 
 std::string Channel::getName() const { return this->name; }
 std::string Channel::getPassword() const { return this->password; }
@@ -45,6 +55,18 @@ std::vector<Client> Channel::getClients() const { return this->clients; }
 std::vector<Client> Channel::getOperators() const { return this->operators; }
 int Channel::getUserLimit() const { return this->userLimit; }
 bool Channel::getInviteOnly() const { return this->inviteOnly; }
+bool Channel::getOpTopicOnly() const { return this->opTopicOnly; }
+
+std::string Channel::getModes() const {
+    std::string modes = "";
+    std::ostringstream ss;
+    ss << this->getUserLimit();
+    if (this->getInviteOnly()) modes += "i";
+    if (this->getOpTopicOnly()) modes += "t";
+    if (!this->getPassword().empty()) modes += "k";
+    if (this->getUserLimit() != 99) modes += "l " + ss.str();
+    return modes;
+}
 std::string Channel::getUserList() const {
     std::string list = "";
     for (size_t i = 0; i < this->clients.size(); i++) {
