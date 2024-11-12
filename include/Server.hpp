@@ -31,6 +31,7 @@ class Server {
     std::vector<struct pollfd> fds;
     std::map<int, Client> map;
     std::vector<Channel> channels;
+    std::map<std::string, File> files;
 
    public:
     Server(std::string port, std::string password);
