@@ -85,6 +85,7 @@ int Server::getPort(void) const { return (this->port); }
 std::string Server::getHostname() const { return (this->hostname); }
 std::string Server::getPassword(void) const { return (this->password); }
 std::map<int, Client> Server::getMap(void) const { return (this->map); }
+std::vector<File> Server::getFiles(void) const { return (this->files); }
 
 int Server::checkConnections(void) {
     int result = poll(&this->fds[0], fds.size(), 0);

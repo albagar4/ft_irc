@@ -13,6 +13,7 @@
 #include <Channel.hpp>
 #include <Client.hpp>
 #include <ircserv.hpp>
+#include <File.hpp>
 
 class Server {
    private:
@@ -31,6 +32,7 @@ class Server {
     std::vector<struct pollfd> fds;
     std::map<int, Client> map;
     std::vector<Channel> channels;
+    std::vector<File> files;
 
    public:
     Server(std::string port, std::string password);
@@ -42,6 +44,7 @@ class Server {
     int getPort() const;
     std::string getHostname() const;
     std::map<int, Client> getMap(void) const;
+    std::vector<File> getFiles(void) const;
 
     void printChannels();
     // Setters
@@ -75,6 +78,7 @@ class Server {
     void parsePrivMsg(std::string buffer, Client &client);
     void parseQuit(std::string buffer, Client &client);
     void parseBot(std::string buffer, Client &client);
+    void parseFileTransfer(std::string buffer, Client &sender, Client &receiver);
 };
 
 #endif
