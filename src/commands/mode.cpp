@@ -19,22 +19,24 @@ static char addMode(Channel &channel, char mode, std::vector<std::string> tokens
             channel.setOpTopicOnly(true);  // CHANGE TOPIC
             return mode;
         case 'k':
-            if (tokens.size() != 2) throw ERR_NEEDMOREPARAMS;
+            if (tokens.size() != 3) throw ERR_NEEDMOREPARAMS;
             channel.setPassword(tokens[2]);
             return mode;
         case 'o': {
-            if (tokens.size() != 2) throw ERR_NEEDMOREPARAMS;
+            if (tokens.size() != 3) throw ERR_NEEDMOREPARAMS;
             std::vector<Client> clients = channel.getClients();
             std::vector<Client>::iterator it = clients.begin();
             for (; it != clients.end(); it++) {
-                if (it->getNick() == tokens[2]) channel.addOperator(*it);
-                return mode;
+                if (it->getNick() == tokens[2]) {
+                    channel.addOperator(*it);
+                    return mode;
+                }
             }
             throw ERR_USERNOTINCHANNEL;
             return 0;
         }
         case 'l':
-            if (tokens.size() != 2) throw ERR_NEEDMOREPARAMS;
+            if (tokens.size() != 3) throw ERR_NEEDMOREPARAMS;
             channel.setUserLimit(atoi(tokens[2].c_str()));
             return mode;
         default:
@@ -54,12 +56,14 @@ static char removeMode(Channel &channel, char mode, std::vector<std::string> tok
             channel.setPassword("");
             return mode;
         case 'o': {
-            if (tokens.size() != 2) throw ERR_NEEDMOREPARAMS;
+            if (tokens.size() != 3) throw ERR_NEEDMOREPARAMS;
             std::vector<Client> operators = channel.getOperators();
             std::vector<Client>::iterator it = operators.begin();
             for (; it != operators.end(); it++) {
-                if (it->getNick() == tokens[2]) channel.removeOperator(*it);
-                return mode;
+                if (it->getNick() == tokens[2]) {
+                    channel.removeOperator(*it);
+                    return mode;
+                }
             }
             throw ERR_USERNOTINCHANNEL;
             return 0;
@@ -86,33 +90,36 @@ void Server::parseMode(std::string buffer, Client &client) {
         size_t i = 0;
         std::string successfulModes;
         try {
-            for (; i < tokens[1].size(); i++) {  // TODO: Increment the + to get to the actual mode
+            for (; i < tokens[1].size(); i++) {
                 if (tokens[1][i] == '+') {
                     successfulModes = '+';
-                    while (i < tokens[1].size() && tokens[1][i] != '-')
+                    while (++i < tokens[1].size() && tokens[1][i] != '-')
                         successfulModes += addMode(*tempChannel, tokens[1][i], tokens);
                 }
                 if (tokens[1][i] == '-') {
                     successfulModes = '-';
-                    while (i < tokens[1].size() && tokens[1][i] != '+')
+                    while (++i < tokens[1].size() && tokens[1][i] != '+')
                         successfulModes += removeMode(*tempChannel, tokens[1][i], tokens);
                 }
             }
             throw SUCCESS;
         } catch (NUM code) {
-            if (code == SUCCESS)
+            if (code == SUCCESS) {
                 client.setResponse(client.getResponse() + ":" + this->getHostname() + " MODE " +
-                                   tempChannel->getName() + " " + successfulModes + " " +
-                                   tokens[2]);
-            else if (code == ERR_USERNOTINCHANNEL)
+                                   tempChannel->getName() + " " + successfulModes);
+                if (tokens.size() == 3) client.setResponse(client.getResponse() + " " + tokens[2]);
+                client.setResponse(client.getResponse() + "\r\n");
+            } else if (code == ERR_USERNOTINCHANNEL)
                 err(ERR_USERNOTINCHANNEL, this->getHostname(), client, tokens[2]);
             else if (code == ERR_UNKNOWNMODE)
                 err(ERR_UNKNOWNMODE, this->getHostname(), client, &tokens[1][i]);
+            else if (code == ERR_NEEDMOREPARAMS)
+                throw ERR_NEEDMOREPARAMS;
         }
     } catch (NUM code) {
         if (code == RPL_CHANNELMODEIS)
             client.setResponse(client.getResponse() + ":" + this->getHostname() + " 324 " +
-                               tempChannel->getName() + tempChannel->getModes() + "\r\n");
+                               tempChannel->getName() + " " + tempChannel->getModes() + "\r\n");
         else if (code == ERR_NEEDMOREPARAMS)
             err(ERR_NEEDMOREPARAMS, this->getHostname(), client, "MODE");
         else if (code == ERR_NOSUCHCHANNEL)

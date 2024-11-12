@@ -145,7 +145,7 @@ void Server::findCommand(std::string buffer, Client& client) {
         buffer.erase(buffer.size() - 1);
     }
     std::string title = buffer.substr(0, buffer.find(" "));
-    if (client.getAuth() == true) {
+    if (client.getAuth() == false) {
         std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
         for (int j = 0; j < 4; j++) {
             if (title == commandArray[j]) {
@@ -176,9 +176,6 @@ void Server::sendResponse() {
 }
 
 void Server::parseCommands(char* buffer, Client& client) {
-    client.setNick("alvega-g");
-    client.setUser("alvega-g");
-    client.setHostname();
     std::string buff(buffer);
     std::vector<std::string> lines = split(buff, '\n');
 

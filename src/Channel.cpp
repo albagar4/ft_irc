@@ -6,6 +6,7 @@ Channel::Channel() {
     this->password = "";
     this->userLimit = 99;
     this->inviteOnly = false;
+    this->opTopicOnly = false;
 }
 
 Channel::Channel(std::string name, std::string topic) {
@@ -14,6 +15,7 @@ Channel::Channel(std::string name, std::string topic) {
     this->password = "";
     this->userLimit = 99;
     this->inviteOnly = false;
+    this->opTopicOnly = false;
 }
 Channel::~Channel() {}
 
@@ -65,6 +67,7 @@ std::string Channel::getModes() const {
     if (this->getOpTopicOnly()) modes += "t";
     if (!this->getPassword().empty()) modes += "k";
     if (this->getUserLimit() != 99) modes += "l " + ss.str();
+    if (!modes.empty()) modes = "+" + modes;
     return modes;
 }
 std::string Channel::getUserList() const {
