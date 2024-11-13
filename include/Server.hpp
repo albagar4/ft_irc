@@ -12,8 +12,8 @@
     "             |______|                  \n"
 #include <Channel.hpp>
 #include <Client.hpp>
-#include <ircserv.hpp>
 #include <File.hpp>
+#include <ircserv.hpp>
 
 class Server {
    private:
@@ -22,7 +22,7 @@ class Server {
     authFunctions authentification[4];
     cmdFunctions commands[8];
 
-    Server() {};
+    Server(){};
     void createServerSocket(void);
     std::string password;
     int port;

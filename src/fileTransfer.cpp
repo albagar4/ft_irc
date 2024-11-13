@@ -1,4 +1,5 @@
 #include <File.hpp>
+#include <Server.hpp>
 /* PRIVMSG <client> :DCC SEND <filename> <host> <port> (<tamaño>)
     <filename>: nombre del archivo; <host>: IP pública del remitente; <port>: puerto del remitente.
     Hay dos partes: el usuario que intenta mandar el fichero, y el que lo recibe.
@@ -22,7 +23,7 @@ static  int    validateFile(std::string filename, Server *server, std::string &a
     if (file.fail())
         return (101);
     aux = filename.substr(filename.find_last_of('/') + 1, filename.size());
-    for (int i = 0; i < aux.size(); i++){
+    for (size_t i = 0; i < aux.size(); i++){
         if (!isalnum(aux[i]) && aux[i] != '.' && aux[i] != '_')
             return (102);
         if (server->getFiles()[i].getFilename().compare(aux) == 0)
@@ -32,6 +33,7 @@ static  int    validateFile(std::string filename, Server *server, std::string &a
 }
 
 static  File    getFile(std::string file, std::string sender, std::string receiver, Server *server){
+  (void)server;
    std::string  path;
    std::string  filename;
 

@@ -2,25 +2,25 @@
 
 File::File() {}
 
-File::File(std::string filename, std::string path, std::string senderNick, std::string receiverNick){
+File::File(std::string filename, std::string path, std::string senderNick,
+           std::string receiverNick) {
     this->filename = filename;
     this->path = path;
     this->senderNick = senderNick;
     this->receiverNick = receiverNick;
 }
-File::File(const File &src){
-    if (this != &src)
-        *this = src;
+File::File(const File &src) {
+    if (this != &src) *this = src;
 }
 
-File    &File::operator = (const File &copy){
-    if (this != &copy)
-    {
+File &File::operator=(const File &copy) {
+    if (this != &copy) {
         this->filename = getFilename();
         this->path = getPath();
         this->senderNick = getSenderNick();
         this->receiverNick = getReceiverNick();
     }
+    return *this;  // Compilation fix
 }
 
 File::~File() {}

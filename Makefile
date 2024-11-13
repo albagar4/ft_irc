@@ -22,7 +22,7 @@ WHITE = $(shell tput setaf 7)
 
 #Sources
 	
-SRC_FILES = main _aux Server Client Channel bot \
+SRC_FILES = main _aux Server Client Channel bot File fileTransfer \
 						commands/cap commands/user commands/nick commands/pass commands/join commands/invite commands/kick commands/quit commands/mode commands/topic commands/privmsg commands/part
 
 SRC = $(addprefix $(SRC_DIR), $(addsuffix .cpp, $(SRC_FILES)))
