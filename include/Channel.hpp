@@ -48,6 +48,7 @@ class Channel {
     std::string getUserList() const;
     bool isEmpty() const;
     void disconnectClient(Client &client);
+    void updateClients(Client origin, std::string response);
 };
 
 #endif

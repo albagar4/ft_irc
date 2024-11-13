@@ -2,7 +2,7 @@
 #include <Server.hpp>
 #include <ircserv.hpp>
 
-static std::string rpl_NoTopic(Server server, Client client, Channel channel) {
+static std::string rpl_NoTopic(Server &server, Client &client, Channel &channel) {
     std::string response = ":" + server.getHostname() + " 331 ";
     response += client.getNick();
     response += " ";
@@ -12,7 +12,7 @@ static std::string rpl_NoTopic(Server server, Client client, Channel channel) {
     return response;
 }
 
-static std::string rpl_Topic(Server server, Client client, Channel channel) {
+static std::string rpl_Topic(Server &server, Client &client, Channel &channel) {
     std::string response = ":" + server.getHostname() + " 332 ";
     response += client.getNick();
     response += " ";
@@ -22,7 +22,7 @@ static std::string rpl_Topic(Server server, Client client, Channel channel) {
     return response;
 }
 
-static std::string rpl_Successful(Client client, Channel channel) {
+static std::string rpl_Successful(Client &client, Channel &channel) {
     std::string response = ":" + client.getHostname();
     response += " TOPIC : ";
     response += channel.getName();

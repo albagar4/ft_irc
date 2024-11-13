@@ -114,3 +114,11 @@ void Channel::disconnectClient(Client &client) {
         }
     }
 }
+void Channel::updateClients(Client origin, std::string response) {
+    std::vector<Client>::iterator it = this->clients.begin();
+    for (; it != this->clients.end(); it++) {
+        if (it->getFd() != origin.getFd()) {
+            it->setResponse(it->getResponse() + response);
+        }
+    };
+}

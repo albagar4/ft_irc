@@ -1,14 +1,6 @@
 #include <Client.hpp>
 #include <Server.hpp>
 #include <ircserv.hpp>
-// Mode:
-//  + adds the mode
-//  - removes the mode
-//    i invite only
-//    t restricts topic change to op
-//    k set/remove channel password
-//    o give/take op
-//    l set/remove user limit to channel
 
 static char addMode(Channel &channel, char mode, std::vector<std::string> tokens) {
     switch (mode) {
