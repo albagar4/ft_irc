@@ -146,7 +146,7 @@ void Server::findCommand(std::string buffer, Client& client) {
         buffer.erase(buffer.size() - 1);
     }
     std::string title = buffer.substr(0, buffer.find(" "));
-    if (client.getAuth() == false) {
+    if (client.getAuth() == true) {
         std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
         for (int j = 0; j < 4; j++) {
             if (title == commandArray[j]) {
