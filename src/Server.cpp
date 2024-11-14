@@ -142,6 +142,8 @@ void Server::manageUpdates(Client& client) {
      * This partial message should be saved in a variable in the client object, since different
      * clients could have different half completed messages
      *
+     * if (!newline in buffer) client.incompleteMessage+=buffer;
+     * else parseCommands;
      */
     if (bytes > 0) this->parseCommands(buffer, client);
 }
