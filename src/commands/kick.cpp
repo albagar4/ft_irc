@@ -22,11 +22,12 @@ void Server::parseKick(std::string buffer, Client &client) {
                     throw ERR_USERNOTINCHANNEL;
             } catch (NUM code) {
                 if (code == SUCCESS) {
-                    client.setResponse(client.getResponse() + ":" + client.getHostname() +
-                                       " KICK " + temp->getName() + " " + names[i]);
-                    if (tokens.size() > 2 && !tokens[2].empty())
-                        client.setResponse(client.getResponse() + " " + tokens[2]);
-                    client.setResponse(client.getResponse() + "\r\n");
+                    std::string response =
+                        ":" + client.getHostname() + " KICK " + temp->getName() + " " + names[i];
+                    if (tokens.size() > 2 && !tokens[2].empty()) response += " " + tokens[2];
+                    response += "\r\n";
+                    client.setResponse(client.getResponse() + response);
+                    temp->updateClients(client, response);  // TODO: Test
                 } else if (code == ERR_NOSUCHNICK)
                     err(ERR_NOSUCHNICK, this->getHostname(), client, names[i]);
                 else if (code == ERR_USERNOTINCHANNEL)

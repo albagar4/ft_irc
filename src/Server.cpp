@@ -86,6 +86,7 @@ std::string Server::getHostname() const { return (this->hostname); }
 std::string Server::getPassword(void) const { return (this->password); }
 std::map<int, Client> Server::getMap(void) const { return (this->map); }
 std::vector<File> Server::getFiles(void) const { return (this->files); }
+std::vector<Channel> Server::getChannels() const { return (this->channels); }
 
 int Server::checkConnections(void) {
     int result = poll(&this->fds[0], fds.size(), 0);
@@ -235,4 +236,13 @@ void Server::closeChannel(Channel channel) {
             return;
         }
     }
+}
+std::vector<Channel> Server::findUserChannels(Client& client) {
+    std::vector<Channel> activeChannels;
+    std::vector<Channel> channels = this->getChannels();
+    std::vector<Channel>::iterator it = channels.begin();
+    for (; it != channels.end(); it++) {
+        if (it->isClient(client)) activeChannels.push_back(*it);
+    }
+    return activeChannels;
 }

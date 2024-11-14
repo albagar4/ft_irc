@@ -23,8 +23,11 @@ void Server::parsePart(std::string buffer, Client &client) {
                     throw ERR_NOTONCHANNEL;
             } catch (NUM code) {
                 if (code == SUCCESS) {
-                    client.setResponse(client.getResponse() + ":" + client.getHostname() +
-                                       " PART : " + temp->getName() + "\r\n");
+                    std::string response =
+                        ":" + client.getHostname() + " PART " + temp->getName() + "\r\n";
+                    // response += " " + reason; TODO: Implement reason for leaving
+                    client.setResponse(client.getResponse() + response);
+                    temp->updateClients(client, response);  // TODO: Test
                     if (temp->isEmpty()) this->closeChannel(*temp);
                 } else if (code == ERR_NOSUCHCHANNEL)
                     err(ERR_NOSUCHCHANNEL, this->getHostname(), client, name);
