@@ -32,6 +32,7 @@ static std::string rpl_Successful(Server &server, Client &client, Channel &chann
     response += " JOIN : ";
     response += channel.getName();
     response += "\r\n";
+    channel.updateClients(client, response);  // TODO: TEST
     if (channel.getTopic() != "") response += rpl_Topic(server, client, channel);
     response += rpl_NamReply(server, client, channel);
     response += rpl_EndOfNames(server, client, channel);
