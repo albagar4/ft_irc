@@ -136,6 +136,13 @@ void Server::manageUpdates(Client& client) {
     ssize_t bytes = recv(client.getFd(), buffer, sizeof(buffer) - 1, 0);
     if (bytes == -1) print_err("recv has failed");
     if (bytes == 0) this->disconnectClient(client);
+    /* TODO:
+     * If a message does not contain newline, don't parse it, instead save it and join it with the
+     * next one, repeat until a newline is found
+     * This partial message should be saved in a variable in the client object, since different
+     * clients could have different half completed messages
+     *
+     */
     if (bytes > 0) this->parseCommands(buffer, client);
 }
 
