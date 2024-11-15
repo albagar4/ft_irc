@@ -2,7 +2,7 @@
 #include <Server.hpp>
 #include <ircserv.hpp>
 
-std::string sendError(NUM errorCode, std::string clientName) {
+static std::string sendError(NUM errorCode, std::string clientName) {
     std::ostringstream oss;
     oss << errorCode;
 

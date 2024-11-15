@@ -8,6 +8,7 @@ Client::Client(int fd, sockaddr_in address) {
     this->password = false;
     this->nick = "";
     this->user = "";
+    this->realname = "";
     if (getpeername(this->fd, (struct sockaddr*)&this->address, &this->address_len) == -1)
         print_err("Unable to source hostname");
     this->host = gethostbyaddr(&this->address.sin_addr, sizeof(this->address.sin_addr), AF_INET);
@@ -24,6 +25,7 @@ bool Client::getAuth() const { return (this->auth); }
 bool Client::getPass() const { return (this->password); }
 std::string Client::getNick() const { return (this->nick); }
 std::string Client::getUser() const { return (this->user); }
+std::string Client::getRealname() const { return (this->realname); }
 hostent* Client::getHost() const { return (this->host); }
 std::string Client::getHostname() const { return (this->hostname); }
 std::string Client::getResponse() const { return (this->response); }
@@ -35,6 +37,7 @@ void Client::setPassword(bool password) { this->password = password; }
 void Client::setAuth(bool auth) { this->auth = auth; }
 void Client::setNick(std::string nick) { this->nick = nick; }
 void Client::setUser(std::string user) { this->user = user; }
+void Client::setRealname(std::string realname) { this->realname = realname; }
 void Client::setHostname() {
     this->hostname = this->nick + "!" + this->user + "@" + this->host->h_name;
 }
