@@ -37,6 +37,7 @@ enum NUM {
     RPL_CHANNELMODEIS = 324,
     RPL_NOTOPIC = 331,
     RPL_TOPIC = 332,
+    ERR_UNKNOWNERROR = 400,
     ERR_NOSUCHNICK = 401,        // "<nickname> :No such nick/channel"
     ERR_NOSUCHSERVER = 402,      // "<server name> :No such server"
     ERR_NOSUCHCHANNEL = 403,     // "<channel name> :No such channel"

@@ -98,6 +98,7 @@ std::string fixSpaces(std::string buffer) {
 
 std::map<NUM, std::string> errorMessages;
 void initializeErrorMessages() {
+    errorMessages[ERR_UNKNOWNERROR] = "Could not process multiple invalid parameters";
     errorMessages[ERR_NOSUCHNICK] = "No such nick/channel";
     errorMessages[ERR_NOSUCHSERVER] = "No such server";
     errorMessages[ERR_NOSUCHCHANNEL] = "No such channel";
