@@ -13,6 +13,7 @@ Client::Client(int fd, sockaddr_in address) {
         print_err("Unable to source hostname");
     this->host = gethostbyaddr(&this->address.sin_addr, sizeof(this->address.sin_addr), AF_INET);
     this->hostname = "";
+    this->incomingMessage = "";
     this->retries = 3;
 }
 
@@ -29,6 +30,7 @@ std::string Client::getRealname() const { return (this->realname); }
 hostent* Client::getHost() const { return (this->host); }
 std::string Client::getHostname() const { return (this->hostname); }
 std::string Client::getResponse() const { return (this->response); }
+std::string Client::getIncomingMessage() const { return (this->incomingMessage); }
 int Client::getRetries() const { return (this->retries); }
 
 void Client::setFd(int fd) { this->fd = fd; }
@@ -42,6 +44,7 @@ void Client::setHostname() {
     this->hostname = this->nick + "!" + this->user + "@" + this->host->h_name;
 }
 void Client::setResponse(std::string response) { this->response = response; }
+void Client::setIncomingMessage(std::string message) { this->incomingMessage = message; }
 void Client::setRetries(int retry) { this->retries = retry; }
 
 std::ostream& operator<<(std::ostream& os, const Client& client) {

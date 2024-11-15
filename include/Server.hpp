@@ -22,7 +22,7 @@ class Server {
     authFunctions authentification[4];
     cmdFunctions commands[8];
 
-    Server(){};
+    Server() {};
     void createServerSocket(void);
     std::string password;
     int port;
@@ -57,7 +57,7 @@ class Server {
     int iterateFds(void);
     void newConnection();
     void manageUpdates(Client &client);
-    void parseCommands(char *buffer, Client &client);
+    void parseCommands(std::string buff, Client &client);
     void disconnectClient(Client &client);
     bool isNewChannel(std::string name);
     Channel *findChannel(std::string name);

@@ -135,16 +135,15 @@ void Server::manageUpdates(Client& client) {
     ssize_t bytes = recv(client.getFd(), buffer, sizeof(buffer) - 1, 0);
     if (bytes == -1) print_err("recv has failed");
     if (bytes == 0) this->disconnectClient(client);
-    /* TODO:
-     * If a message does not contain newline, don't parse it, instead save it and join it with the
-     * next one, repeat until a newline is found
-     * This partial message should be saved in a variable in the client object, since different
-     * clients could have different half completed messages
-     *
-     * if (!newline in buffer) client.incompleteMessage+=buffer;
-     * else parseCommands;
-     */
-    if (bytes > 0) this->parseCommands(buffer, client);
+    if (bytes > 0) {
+        std::string message(buffer);
+        if (message.find_first_of("\n") != std::string::npos) {
+            client.setIncomingMessage(client.getIncomingMessage() + message);
+            this->parseCommands(client.getIncomingMessage(), client);
+        } else {
+            client.setIncomingMessage(client.getIncomingMessage() + message);
+        }
+    }
 }
 
 void Server::findCommand(std::string buffer, Client& client) {
@@ -185,8 +184,7 @@ void Server::sendResponse() {
     }
 }
 
-void Server::parseCommands(char* buffer, Client& client) {
-    std::string buff(buffer);
+void Server::parseCommands(std::string buff, Client& client) {
     std::vector<std::string> lines = split(buff, '\n');
 
     for (size_t i = 0; i < lines.size(); i++) {

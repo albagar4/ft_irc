@@ -16,6 +16,7 @@ class Client {
     std::string hostname;
     struct hostent* host;
     std::string response;
+    std::string incomingMessage;
     int retries;
 
    public:
@@ -33,6 +34,7 @@ class Client {
     hostent* getHost() const;
     std::string getHostname() const;
     std::string getResponse() const;
+    std::string getIncomingMessage() const;
     int getRetries() const;
 
     void setFd(int fd);
@@ -44,6 +46,7 @@ class Client {
     void setRealname(std::string realname);
     void setHostname();
     void setResponse(std::string response);
+    void setIncomingMessage(std::string message);
     void setRetries(int retry);
 };
 
