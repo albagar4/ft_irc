@@ -12,6 +12,7 @@ Client::Client(int fd, sockaddr_in address) {
         print_err("Unable to source hostname");
     this->host = gethostbyaddr(&this->address.sin_addr, sizeof(this->address.sin_addr), AF_INET);
     this->hostname = "";
+    this->incomingMessage = "";
 }
 
 Client::Client() {}
@@ -26,6 +27,7 @@ std::string Client::getUser() const { return (this->user); }
 hostent* Client::getHost() const { return (this->host); }
 std::string Client::getHostname() const { return (this->hostname); }
 std::string Client::getResponse() const { return (this->response); }
+std::string Client::getIncomingMessage() const { return (this->incomingMessage); }
 
 void Client::setFd(int fd) { this->fd = fd; }
 void Client::setAddress(sockaddr_in address) { this->address = address; }
@@ -37,6 +39,7 @@ void Client::setHostname() {
     this->hostname = this->nick + "!" + this->user + "@" + this->host->h_name;
 }
 void Client::setResponse(std::string response) { this->response = response; }
+void Client::setIncomingMessage(std::string message) { this->incomingMessage = message; }
 
 std::ostream& operator<<(std::ostream& os, const Client& client) {
     os << "Client " << client.getHost()->h_name << " in socket " << client.getFd();
