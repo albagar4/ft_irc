@@ -29,7 +29,7 @@ static std::string rpl_Topic(Server &server, Client &client, Channel &channel) {
 }
 static std::string rpl_Successful(Server &server, Client &client, Channel &channel) {
     std::string response = ":" + client.getHostname();
-    response += " JOIN : ";
+    response += " JOIN :";
     response += channel.getName();
     response += "\r\n";
     channel.updateClients(client, response);  // TODO: TEST

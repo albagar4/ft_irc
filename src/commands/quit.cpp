@@ -5,7 +5,7 @@
 void Server::parseQuit(std::string buffer, Client &client) {
     std::string response = ":" + client.getHostname() + " QUIT :" + buffer + "\r\n";
     std::vector<Channel> userChannels = this->findUserChannels(client);
-    if (userChannels.empty()) print_err("PANIC");
+    // if (userChannels.empty()) print_err("PANIC");
     std::vector<Channel>::iterator it = userChannels.begin();
     for (; it != userChannels.end(); it++) {
         it->updateClients(client, response);

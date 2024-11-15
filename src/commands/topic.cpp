@@ -24,7 +24,7 @@ static std::string rpl_Topic(Server &server, Client &client, Channel &channel) {
 
 static std::string rpl_Successful(Client &client, Channel &channel) {
     std::string response = ":" + client.getHostname();
-    response += " TOPIC : ";
+    response += " TOPIC ";
     response += channel.getName();
     response += " :" + channel.getTopic();
     response += "\r\n";

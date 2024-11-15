@@ -118,6 +118,10 @@ void Server::newConnection() {
     if (fcntl(clientSocket, F_SETFL, O_NONBLOCK) == -1) exit(1);
 
     Client client(clientSocket, address);
+    client.setAuth(true);
+    client.setNick("alvega-g");
+    client.setUser("alvega-g");
+    client.setHostname();
     this->map[clientSocket] = client;
 
     pollfd poll;

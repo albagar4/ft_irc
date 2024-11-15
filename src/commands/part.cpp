@@ -10,7 +10,6 @@ void Server::parsePart(std::string buffer, Client &client) {
     try {
         if (buffer.empty()) throw ERR_NEEDMOREPARAMS;
         for (i = 0; i < tokens.size(); i++) {
-            std::cout << i << " == " << tokens[i] << std::endl;
             try {
                 name = tokens[i].substr(0, tokens[i].find(" "));
                 reason = tokens[i].substr(tokens[i].find(" ") + 1, tokens[i].size() - 1);
