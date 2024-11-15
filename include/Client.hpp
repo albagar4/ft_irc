@@ -15,6 +15,7 @@ class Client {
     std::string hostname;
     struct hostent* host;
     std::string response;
+    int retries;
 
    public:
     Client();
@@ -30,6 +31,7 @@ class Client {
     hostent* getHost() const;
     std::string getHostname() const;
     std::string getResponse() const;
+    int getRetries() const;
 
     void setFd(int fd);
     void setAddress(sockaddr_in address);
@@ -39,6 +41,7 @@ class Client {
     void setUser(std::string user);
     void setHostname();
     void setResponse(std::string response);
+    void setRetries(int retry);
 };
 
 std::ostream& operator<<(std::ostream& os, const Client& client);
