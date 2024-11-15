@@ -97,7 +97,7 @@ void Server::parseMode(std::string buffer, Client &client) {
             throw SUCCESS;
         } catch (NUM code) {
             if (code == SUCCESS) {
-                client.setResponse(client.getResponse() + ":" + this->getHostname() + " MODE " +
+                client.setResponse(client.getResponse() + ":" + client.getHostname() + " MODE " +
                                    tempChannel->getName() + " " + successfulModes);
                 if (tokens.size() == 3) client.setResponse(client.getResponse() + " " + tokens[2]);
                 client.setResponse(client.getResponse() + "\r\n");
@@ -111,7 +111,8 @@ void Server::parseMode(std::string buffer, Client &client) {
     } catch (NUM code) {
         if (code == RPL_CHANNELMODEIS)
             client.setResponse(client.getResponse() + ":" + this->getHostname() + " 324 " +
-                               tempChannel->getName() + " " + tempChannel->getModes() + "\r\n");
+                               client.getNick() + " " + tempChannel->getName() + " " +
+                               tempChannel->getModes() + "\r\n");
         else if (code == ERR_NEEDMOREPARAMS)
             err(ERR_NEEDMOREPARAMS, this->getHostname(), client, "MODE");
         else if (code == ERR_NOSUCHCHANNEL)
