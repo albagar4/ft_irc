@@ -81,6 +81,8 @@ class Server {
     void parseQuit(std::string buffer, Client &client);
     void parseBot(std::string buffer, Client &client);
     void parseFileTransfer(std::string buffer, Client &sender, Client &receiver);
+    void sendFile(std::vector<std::string> arguments, Client &sender, Client &receiver);
+    void receiveFile(std::vector<std::string> arguments, Client &receiver, Client &sender);
 };
 
 #endif
