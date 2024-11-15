@@ -49,6 +49,7 @@ void Channel::removeOperator(Client op) {
 void Channel::setUserLimit(int userLimit) { this->userLimit = userLimit; }
 void Channel::setInviteOnly(bool inviteOnly) { this->inviteOnly = inviteOnly; }
 void Channel::setOpTopicOnly(bool opTopicOnly) { this->opTopicOnly = opTopicOnly; }
+void Channel::setServer(Server *server) { this->server = server; }
 
 std::string Channel::getName() const { return this->name; }
 std::string Channel::getPassword() const { return this->password; }
@@ -118,7 +119,12 @@ void Channel::updateClients(Client origin, std::string response) {
     std::vector<Client>::iterator it = this->clients.begin();
     for (; it != this->clients.end(); it++) {
         if (it->getFd() != origin.getFd()) {
-            it->setResponse(it->getResponse() + response);
+            it->setResponse(response);
+            if (this->server) {
+                std::map<int, Client> &clientMap = this->server->getMap();
+                std::map<int, Client>::iterator mapIt = clientMap.find(it->getFd());
+                if (mapIt != clientMap.end()) mapIt->second.setResponse(it->getResponse());
+            }
         }
-    };
+    }
 }

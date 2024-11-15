@@ -15,9 +15,10 @@ Client::Client(int fd, sockaddr_in address) {
     this->hostname = "";
     this->incomingMessage = "";
     this->retries = 3;
+    this->response = "";
 }
 
-Client::Client() {}
+Client::Client() { this->fd = 0; }
 Client::~Client() {}
 
 int Client::getFd() const { return this->fd; }

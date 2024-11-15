@@ -32,7 +32,7 @@ static std::string rpl_Successful(Server &server, Client &client, Channel &chann
     response += " JOIN :";
     response += channel.getName();
     response += "\r\n";
-    channel.updateClients(client, response);  // TODO: TEST
+    channel.updateClients(client, response);
     if (channel.getTopic() != "") response += rpl_Topic(server, client, channel);
     response += rpl_NamReply(server, client, channel);
     response += rpl_EndOfNames(server, client, channel);
@@ -56,6 +56,7 @@ void Server::parseJoin(std::string buffer, Client &client) {
                 if (isNewChannel(tokens[i]) == true) {
                     Channel newChannel(tokens[i], topic);
                     newChannel.addClient(client);
+                    newChannel.setServer(this);
                     this->channels.push_back(newChannel);
                 } else {
                     temp = this->findChannel(tokens[i]);

@@ -9,7 +9,7 @@ void Server::parseNick(std::string buffer, Client &client) {
         if (buffer.find('#') != buffer.npos || buffer.find(':') != buffer.npos || buffer.find(' ') != buffer.npos || isdigit(buffer[0])) throw 432;
         for (unsigned long i = 0; i < this->getMap().size(); i++)
         {
-            ft_print(this->map[i].getNick());
+            // ft_print(this->map[i].getNick());
             if (this->map[i].getNick().compare(buffer) == 0) throw 433;
         }
         client.setNick(buffer);

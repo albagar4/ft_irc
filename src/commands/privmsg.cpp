@@ -9,8 +9,8 @@ void Server::parsePrivMsg(std::string buffer, Client &client) {
     Client aux;
     bool find = false;
 
-    ft_print("Inside PrivMsg: ");
-    ft_print("Buffer: " + buffer);
+    // ft_print("Inside PrivMsg: ");
+    // ft_print("Buffer: " + buffer);
     try {
         if (buffer.empty()) throw 461;
         if (buffer[0] == ':') throw 411;
@@ -30,7 +30,8 @@ void Server::parsePrivMsg(std::string buffer, Client &client) {
                 }
             }
             if (find == false) throw 404;
-            client.setResponse(":" + client.getNick() + "!" + client.getUser() + "@localhost PRIVMSG " + target + " " + message + "\r\n");
+            client.setResponse(":" + client.getHostname()+ " PRIVMSG " + target + " " + message + "\r\n");
+            temp->updateClients(client, client.getResponse());
         }
         else{
             if (target == "bot-as") this->parseBot(message, client);

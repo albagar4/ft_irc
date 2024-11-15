@@ -2,6 +2,7 @@
 #define CHANNEL_HPP
 
 #include <Client.hpp>
+#include <Server.hpp>
 #include <ircserv.hpp>
 
 class Channel {
@@ -15,6 +16,7 @@ class Channel {
     bool inviteOnly;
     bool opTopicOnly;
     std::string modes;
+    Server *server;
 
    public:
     Channel();
@@ -31,6 +33,7 @@ class Channel {
     void setUserLimit(int userLimit);
     void setInviteOnly(bool inviteOnly);
     void setOpTopicOnly(bool opTopicOnly);
+    void setServer(Server *server);
     // Getters
     std::string getName() const;
     std::string getPassword() const;

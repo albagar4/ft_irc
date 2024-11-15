@@ -1,4 +1,6 @@
+#include <Channel.hpp>
 #include <Server.hpp>
+#include <iterator>
 
 void Server::createServerSocket() {
     // Crear el socket del servidor
@@ -84,7 +86,7 @@ int Server::getServerSocket(void) const { return (this->serverSocket); }
 int Server::getPort(void) const { return (this->port); }
 std::string Server::getHostname() const { return (this->hostname); }
 std::string Server::getPassword(void) const { return (this->password); }
-std::map<int, Client> Server::getMap(void) const { return (this->map); }
+std::map<int, Client>& Server::getMap(void) { return (this->map); }
 std::vector<File> Server::getFiles(void) const { return (this->files); }
 std::vector<Channel> Server::getChannels() const { return (this->channels); }
 
@@ -135,15 +137,17 @@ void Server::manageUpdates(Client& client) {
     ssize_t bytes = recv(client.getFd(), buffer, sizeof(buffer) - 1, 0);
     if (bytes == -1) print_err("recv has failed");
     if (bytes == 0) this->disconnectClient(client);
-    if (bytes > 0) {
-        std::string message(buffer);
-        if (message.find_first_of("\n") != std::string::npos) {
-            client.setIncomingMessage(client.getIncomingMessage() + message);
-            this->parseCommands(client.getIncomingMessage(), client);
-        } else {
-            client.setIncomingMessage(client.getIncomingMessage() + message);
-        }
-    }
+    if (bytes > 0) this->parseCommands(buffer, client);
+  // Esto no funca :(
+    // if (bytes > 0) {
+    //     std::string message(buffer);
+    //     if (message.find_first_of("\n") != std::string::npos) {
+    //         client.setIncomingMessage(client.getIncomingMessage() + message);
+    //         this->parseCommands(client.getIncomingMessage(), client);
+    //     } else {
+    //         client.setIncomingMessage(client.getIncomingMessage() + message);
+    //     }
+    // }
 }
 
 void Server::findCommand(std::string buffer, Client& client) {
@@ -176,9 +180,12 @@ void Server::findCommand(std::string buffer, Client& client) {
 }
 
 void Server::sendResponse() {
-    for (std::map<int, Client>::iterator it = this->map.begin(); it != this->map.end(); it++) {
+    std::map<int, Client>::iterator it = map.begin();
+    std::advance(it, 4);
+    for (; it != this->map.end(); it++) {
         if (!it->second.getResponse().empty()) {
-            send(it->first, it->second.getResponse().c_str(), it->second.getResponse().size(), 0);
+            send(it->first, it->second.getResponse().c_str(),
+                 it->second.getResponse().size(), 0);
             it->second.setResponse("");
         }
     }

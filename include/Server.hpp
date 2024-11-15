@@ -15,6 +15,7 @@
 #include <File.hpp>
 #include <ircserv.hpp>
 
+class Channel;
 class Server {
    private:
     typedef void (Server::*authFunctions)(std::string, Client &);
@@ -43,7 +44,7 @@ class Server {
     std::string getPassword() const;
     int getPort() const;
     std::string getHostname() const;
-    std::map<int, Client> getMap(void) const;
+    std::map<int, Client> &getMap(void);
     std::vector<File> getFiles(void) const;
     std::vector<Channel> getChannels() const;
 
