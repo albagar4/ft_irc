@@ -56,26 +56,15 @@ void printLaunchServer(const Server& server) {
     std::cout << "\nHostname: \t" << server.getHostname();
     std::cout << RESET << std::endl;
 }
-// std::vector<std::string> split(std::string input, char delimiter) {
-//     std::vector<std::string> tokens;
-//     std::stringstream ss(input);
-//     std::string token;
-//
-//     while (std::getline(ss, token, delimiter)) {
-//         tokens.push_back(token);
-//     }
-//     return tokens;
-// }
+
 std::vector<std::string> split(std::string input, char delimiter) {
     std::vector<std::string> tokens;
     std::stringstream ss(input);
     std::string token;
 
     while (std::getline(ss, token, delimiter)) {
-        // Check if token starts with ':'
         if (!token.empty() && token[0] == ':') {
-            // Add the remaining part of the string as one token (remove the leading ':')
-            tokens.push_back(token.substr(1) + delimiter + ss.str().substr(ss.tellg()));
+            tokens.push_back(token.substr(1));
             break;
         }
         tokens.push_back(token);
@@ -98,6 +87,7 @@ std::string fixSpaces(std::string buffer) {
 
 std::map<NUM, std::string> errorMessages;
 void initializeErrorMessages() {
+    errorMessages[ERR_UNKNOWNERROR] = "Could not process multiple invalid parameters";
     errorMessages[ERR_NOSUCHNICK] = "No such nick/channel";
     errorMessages[ERR_NOSUCHSERVER] = "No such server";
     errorMessages[ERR_NOSUCHCHANNEL] = "No such channel";

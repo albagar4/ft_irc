@@ -9,9 +9,9 @@ class File {
     std::string path;
     std::string senderNick;
     std::string receiverNick;
-    File();
 
    public:
+    File();
     File(std::string filename, std::string path, std::string senderNick, std::string receiverNick);
     File(const File &src);
     ~File();
