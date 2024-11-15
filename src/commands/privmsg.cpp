@@ -44,7 +44,7 @@ void Server::parsePrivMsg(std::string buffer, Client &client) {
                     }
                 }
                 if (find == false) throw 401;
-                if (message.substr(1, 8).compare("DCC SEND") == 0)
+                if (message.substr(1, 3).compare("DCC") == 0)
                     parseFileTransfer(message, client, aux);
                 else
                     client.setResponse(":" + client.getNick() + "!" + client.getUser() + "@localhost PRIVMSG " + target + " " + message + "\r\n");
