@@ -12,6 +12,7 @@ class Channel {
     std::string topic;
     std::vector<Client> clients;
     std::vector<Client> operators;
+    std::vector<Client> invited;
     int userLimit;
     bool inviteOnly;
     bool opTopicOnly;
@@ -29,6 +30,7 @@ class Channel {
     void setTopic(std::string topic);
     void addClient(Client client);
     void addOperator(Client op);
+    void addInvited(Client invited);
     void removeOperator(Client op);
     void setUserLimit(int userLimit);
     void setInviteOnly(bool inviteOnly);
@@ -40,6 +42,7 @@ class Channel {
     std::string getTopic() const;
     std::vector<Client> getClients() const;
     std::vector<Client> getOperators() const;
+    std::vector<Client> getInviteds() const;
     int getUserLimit() const;
     bool getInviteOnly() const;
     bool getOpTopicOnly() const;
