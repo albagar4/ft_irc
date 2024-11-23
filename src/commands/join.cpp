@@ -44,6 +44,7 @@ void Server::parseJoin(std::string buffer, Client &client) {
     try {
         if (buffer.empty()) throw ERR_NEEDMOREPARAMS;
         std::vector<std::string> tokens = split(buffer, ',');
+        std::vector<std::string> nameKey;
         for (size_t i = 0; i < tokens.size(); i++) {
             try {
                 size_t colonPos = tokens[i].find_first_of(":");
@@ -53,22 +54,26 @@ void Server::parseJoin(std::string buffer, Client &client) {
                 } else {
                     topic = "";
                 }
-                if (isNewChannel(tokens[i]) == true) {
-                    Channel newChannel(tokens[i], topic);
+                nameKey = split(tokens[i], ' ');
+                if (isNewChannel(nameKey[0]) == true) {
+                    Channel newChannel(nameKey[0], topic);
                     newChannel.addClient(client);
                     newChannel.setServer(this);
                     this->channels.push_back(newChannel);
                 } else {
-                    temp = this->findChannel(tokens[i]);
+                    temp = this->findChannel(nameKey[0]);
                     if (temp->isClient(client)) break;
                     if ((size_t)temp->getUserLimit() == temp->getClients().size())
                         throw ERR_CHANNELISFULL;
                     // TODO: Implementar una vez INVITE esté hecho
                     // Check if user is invited: if (temp->getInviteOnly() == true && ) throw
                     // ERR_INVITEONLYCHAN;
-                    // TODO: Comprobar una vez esté funcinal
-                    // if(!temp->getPassword().empty() && key != temp->getPassword())
-                    // throw ERR_BADCHANNELKEY;
+                    if (!temp->getPassword().empty()) {
+                        if (nameKey.size() > 1) {
+                            if (nameKey[1] != temp->getPassword()) throw ERR_BADCHANNELKEY;
+                        } else
+                            throw ERR_BADCHANNELKEY;
+                    }
                     temp->addClient(client);
                 }
                 throw SUCCESS;
@@ -76,13 +81,13 @@ void Server::parseJoin(std::string buffer, Client &client) {
                 if (code == SUCCESS)
                     client.setResponse(
                         client.getResponse() +
-                        rpl_Successful(*this, client, *this->findChannel(tokens[i])));
+                        rpl_Successful(*this, client, *this->findChannel(nameKey[0])));
                 else if (code == ERR_CHANNELISFULL)
                     err(ERR_CHANNELISFULL, this->getHostname(), client, temp->getName());
                 // else if (code == ERR_INVITEONLYCHAN)
                 //  err(ERR_INVITEONLYCHAN, this->getHostname(), client, temp->getName());
-                //  else if (code == ERR_BADCHANNELKEY)
-                //   err(ERR_BADCHANNELKEY, this->getHostname(), client, temp->getName());
+                else if (code == ERR_BADCHANNELKEY)
+                    err(ERR_BADCHANNELKEY, this->getHostname(), client, temp->getName());
             }
         }
     } catch (NUM code) {
