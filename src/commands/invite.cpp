@@ -2,16 +2,6 @@
 #include <Server.hpp>
 #include <ircserv.hpp>
 
-static std::string sendError(NUM errorCode, std::string clientName) {
-    std::ostringstream oss;
-    oss << errorCode;
-
-    std::string message = errorMessages[errorCode];
-    std::string buffer = oss.str() + " " + clientName + " :" + message + "\r\n";
-
-    return (buffer);
-}
-
 void Server::parseInvite(std::string buffer, Client &client) {
     std::vector<std::string> params = split(buffer, ' ');
     try {

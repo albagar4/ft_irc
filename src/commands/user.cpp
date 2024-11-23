@@ -25,16 +25,6 @@ bool correctChars(std::string params, int sign) {
     return (true);
 }
 
-static std::string sendError(NUM errorCode, std::string clientName) {
-    std::ostringstream oss;
-    oss << errorCode;
-
-    std::string message = errorMessages[errorCode];
-    std::string buffer = oss.str() + " " + clientName + " :" + message + "\r\n";
-
-    return (buffer);
-}
-
 void Server::parseUser(std::string buffer, Client &client) {
     try {
         if (buffer.empty() || noParams(buffer) == true) throw ERR_NEEDMOREPARAMS;
@@ -54,11 +44,11 @@ void Server::parseUser(std::string buffer, Client &client) {
         client.setHostname();
 
         if (code == ERR_NEEDMOREPARAMS)
-            client.setResponse(this->getHostname() + " " + sendError(ERR_NEEDMOREPARAMS, client.getHostname()));
+            err(ERR_NEEDMOREPARAMS, this->getHostname(), client, buffer);
         if (code == ERR_ALREADYREGISTERED)
-            client.setResponse(this->getHostname() + " " + sendError(ERR_ALREADYREGISTERED, client.getHostname()));
+            err(ERR_ALREADYREGISTERED, this->getHostname(), client);
         if (code == ERR_NOTREGISTERED) {
-            client.setResponse(this->getHostname() + " " + sendError(ERR_NOTREGISTERED, client.getHostname()));
+            err(ERR_NOTREGISTERED, this->getHostname(), client);
             if (client.getNick() == "")
                 client.setResponse(client.getResponse() + "NICK must be setted before USER\r\n");
             else

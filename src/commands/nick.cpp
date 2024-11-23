@@ -8,20 +8,24 @@ void Server::parseNick(std::string buffer, Client &client) {
         if (buffer.empty()) throw 431;
         if (buffer.find('#') != buffer.npos || buffer.find(':') != buffer.npos || buffer.find(' ') != buffer.npos || isdigit(buffer[0])) throw 432;
         for (unsigned long i = 0; i < this->getMap().size(); i++)
-        {
-            // ft_print(this->map[i].getNick());
             if (this->map[i].getNick().compare(buffer) == 0) throw 433;
+        if (!client.getNick().empty()) {
+            std::vector<Channel> channel_list = this->findUserChannels(client);
+            std::string message = ":" + client.getHostname() + " NICK :" + buffer + "\r\n";
+
+            for (size_t i = 0; i < channel_list.size(); i++)
+                channel_list[i].updateClients(client, message);
+            client.setResponse(message);
         }
         client.setNick(buffer);
     } catch (int code) {
         if (code == 451)
-            client.setResponse(":" + this->getHostname() + " 451 :You have not registered\r\n Password hasn't been validated\r\n");
+            err(ERR_NOTREGISTERED, this->getHostname(), client);
         if (code == 431)
-            client.setResponse(":" + this->getHostname() + " 431 :No nickname given\r\n");
+            err(ERR_NONICKNAMEGIVEN, this->getHostname(), client);
         if (code == 432)
-            client.setResponse(":" + this->getHostname() + " 432 " + buffer + " :Erroneus nickname\r\n");
+            err(ERR_ERRONEUSNICKNAME, this->getHostname(), client, buffer);
         if (code == 433)
-            client.setResponse(":" + this->getHostname() + " 433 " + buffer + " :Nickname is already in use\r\n");
-        std::cout << client.getResponse() << std::endl;
+            err(ERR_NICKNAMEINUSE, this->getHostname(), client, buffer);
     }
 }

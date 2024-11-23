@@ -20,8 +20,8 @@ class Server {
    private:
     typedef void (Server::*authFunctions)(std::string, Client &);
     typedef void (Server::*cmdFunctions)(std::string, Client &);
-    authFunctions authentification[4];
-    cmdFunctions commands[8];
+    authFunctions authentification[5];
+    cmdFunctions commands[9];
 
     Server() {};
     void createServerSocket(void);
