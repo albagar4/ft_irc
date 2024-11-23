@@ -28,6 +28,11 @@ void Server::parsePart(std::string buffer, Client &client) {
                     client.setResponse(client.getResponse() + response);
                     temp->updateClients(client, response);  // TODO: Test
                     if (temp->isEmpty()) this->closeChannel(*temp);
+                    // If an OP leaves, and there isn't any other OP in the channel
+                    // a new OP must be selected
+                    // if (temp->getOperators().empty()) {
+                    //    temp->addOperator(temp->getClients()[0]);
+                    // }
                 } else if (code == ERR_NOSUCHCHANNEL)
                     err(ERR_NOSUCHCHANNEL, this->getHostname(), client, name);
                 else if (code == ERR_NOTONCHANNEL)
