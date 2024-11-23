@@ -69,6 +69,7 @@ void Server::setAuthFunctions(void) {
     this->authentification[1] = &Server::parsePass;
     this->authentification[2] = &Server::parseNick;
     this->authentification[3] = &Server::parseUser;
+    this->authentification[4] = &Server::parseQuit;
 }
 
 void Server::setCmdFunctions(void) {
@@ -80,6 +81,7 @@ void Server::setCmdFunctions(void) {
     this->commands[5] = &Server::parseMode;
     this->commands[6] = &Server::parsePrivMsg;
     this->commands[7] = &Server::parseQuit;
+    this->commands[8] = &Server::parseNick;
 }
 
 int Server::getServerSocket(void) const { return (this->serverSocket); }
@@ -159,24 +161,24 @@ void Server::findCommand(std::string buffer, Client& client) {
     }
     std::string title = buffer.substr(0, buffer.find(" "));
     if (client.getAuth() == false) {
-        std::string commandArray[4] = {"CAP", "PASS", "NICK", "USER"};
+        std::string commandArray[5] = {"CAP", "PASS", "NICK", "USER", "QUIT"};
         for (int j = 0; j < 4; j++) {
             if (title == commandArray[j]) {
                 (this->*authentification[j])(fixSpaces(buffer), client);
+                return ;
             }
         }
-        // MENSAJE DE ERROR DE COMANDO
     } else {
-        std::string commandArray[8] = {"JOIN",  "PART", "KICK",    "INVITE",
-                                       "TOPIC", "MODE", "PRIVMSG", "QUIT"};
+        std::string commandArray[9] = {"JOIN",  "PART", "KICK",    "INVITE",
+                                       "TOPIC", "MODE", "PRIVMSG", "QUIT", "NICK"};
         for (int j = 0; j < 8; j++) {
             if (title == commandArray[j]) {
                 (this->*commands[j])(fixSpaces(buffer), client);
-                break;
+                return ;
             }
         }
-        // mensaje con la lista de usos y comandos disponibles
     }
+    err(ERR_UNKNOWNCOMMAND, this->getHostname(), client, buffer);
 }
 
 void Server::sendResponse() {

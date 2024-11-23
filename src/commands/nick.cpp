@@ -9,6 +9,14 @@ void Server::parseNick(std::string buffer, Client &client) {
         if (buffer.find('#') != buffer.npos || buffer.find(':') != buffer.npos || buffer.find(' ') != buffer.npos || isdigit(buffer[0])) throw 432;
         for (unsigned long i = 0; i < this->getMap().size(); i++)
             if (this->map[i].getNick().compare(buffer) == 0) throw 433;
+        if (!client.getNick().empty()) {
+            std::vector<Channel> channel_list = this->findUserChannels(client);
+            std::string message = ":" + client.getHostname() + " NICK :" + buffer + "\r\n";
+
+            for (size_t i = 0; i < channel_list.size(); i++)
+                channel_list[i].updateClients(client, message);
+            client.setResponse(message);
+        }
         client.setNick(buffer);
     } catch (int code) {
         if (code == 451)
