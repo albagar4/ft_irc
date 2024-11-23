@@ -3,6 +3,7 @@
 #include <ircserv.hpp>
 void Server::parseKick(std::string buffer, Client &client) {
     Channel *temp;
+    Client *clientToKick;
     std::vector<std::string> tokens = split(buffer, ' ');
     try {
         if (!tokens.size()) throw ERR_NEEDMOREPARAMS;
@@ -13,7 +14,7 @@ void Server::parseKick(std::string buffer, Client &client) {
         std::vector<std::string> names = split(tokens[1], ',');
         for (size_t i = 0; i < names.size(); i++) {
             try {
-                Client *clientToKick = this->findClient(names[i]);
+                clientToKick = this->findClient(names[i]);
                 if (!clientToKick) throw ERR_NOSUCHNICK;
                 if (temp->isClient(*clientToKick)) {
                     temp->disconnectClient(*clientToKick);
@@ -27,7 +28,8 @@ void Server::parseKick(std::string buffer, Client &client) {
                     if (tokens.size() > 2 && !tokens[2].empty()) response += " " + tokens[2];
                     response += "\r\n";
                     client.setResponse(client.getResponse() + response);
-                    temp->updateClients(client, response);  // TODO: Test
+                    temp->updateClients(client, response);
+                    clientToKick->setResponse(client.getResponse());
                 } else if (code == ERR_NOSUCHNICK)
                     err(ERR_NOSUCHNICK, this->getHostname(), client, names[i]);
                 else if (code == ERR_USERNOTINCHANNEL)

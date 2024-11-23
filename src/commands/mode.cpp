@@ -101,6 +101,7 @@ void Server::parseMode(std::string buffer, Client &client) {
                                    tempChannel->getName() + " " + successfulModes);
                 if (tokens.size() == 3) client.setResponse(client.getResponse() + " " + tokens[2]);
                 client.setResponse(client.getResponse() + "\r\n");
+                tempChannel->updateClients(client, client.getResponse());
             } else if (code == ERR_USERNOTINCHANNEL)
                 err(ERR_USERNOTINCHANNEL, this->getHostname(), client, tokens[2]);
             else if (code == ERR_UNKNOWNMODE)

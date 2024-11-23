@@ -50,7 +50,7 @@ void Server::parseTopic(std::string buffer, Client &client) {
             else
                 throw RPL_TOPIC;
         } else {
-            if (!temp->isOperator(client)) throw ERR_CHANOPRIVSNEEDED;
+            if (temp->getOpTopicOnly() && !temp->isOperator(client)) throw ERR_CHANOPRIVSNEEDED;
             topic.erase(topic.begin());
             temp->setTopic(topic);
             throw SUCCESS;
