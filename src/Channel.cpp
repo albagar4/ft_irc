@@ -37,6 +37,12 @@ void Channel::addOperator(Client op) {
     }
     this->operators.push_back(op);
 }
+void Channel::addInvited(Client invited) {
+    for (size_t i = 0; i != this->invited.size(); i++) {
+        if (invited.getFd() == this->invited[i].getFd()) return;
+    }
+    this->invited.push_back(invited);
+}
 void Channel::removeOperator(Client op) {
     for (std::vector<Client>::iterator it = this->operators.begin(); it != this->operators.end();
          it++) {
@@ -56,6 +62,7 @@ std::string Channel::getPassword() const { return this->password; }
 std::string Channel::getTopic() const { return this->topic; }
 std::vector<Client> Channel::getClients() const { return this->clients; }
 std::vector<Client> Channel::getOperators() const { return this->operators; }
+std::vector<Client> Channel::getInviteds() const { return this->invited; }
 int Channel::getUserLimit() const { return this->userLimit; }
 bool Channel::getInviteOnly() const { return this->inviteOnly; }
 bool Channel::getOpTopicOnly() const { return this->opTopicOnly; }
@@ -99,6 +106,12 @@ bool Channel::isClient(Client client) const {
 bool Channel::isOperator(Client client) const {
     for (size_t i = 0; i < this->operators.size(); i++) {
         if (client.getFd() == this->operators[i].getFd()) return true;
+    }
+    return false;
+}
+bool Channel::isInvited(Client client) const {
+    for (size_t i = 0; i < this->invited.size(); i++) {
+        if (client.getFd() == this->invited[i].getFd()) return true;
     }
     return false;
 }
