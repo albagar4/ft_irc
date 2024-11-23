@@ -65,9 +65,8 @@ void Server::parseJoin(std::string buffer, Client &client) {
                     if (temp->isClient(client)) break;
                     if ((size_t)temp->getUserLimit() == temp->getClients().size())
                         throw ERR_CHANNELISFULL;
-                    // TODO: Implementar una vez INVITE esté hecho
-                    // Check if user is invited: if (temp->getInviteOnly() == true && ) throw
-                    // ERR_INVITEONLYCHAN;
+                    if (temp->getInviteOnly() == true && !temp->isInvited(client))
+                        throw ERR_INVITEONLYCHAN;
                     if (!temp->getPassword().empty()) {
                         if (nameKey.size() > 1) {
                             if (nameKey[1] != temp->getPassword()) throw ERR_BADCHANNELKEY;
@@ -84,8 +83,8 @@ void Server::parseJoin(std::string buffer, Client &client) {
                         rpl_Successful(*this, client, *this->findChannel(nameKey[0])));
                 else if (code == ERR_CHANNELISFULL)
                     err(ERR_CHANNELISFULL, this->getHostname(), client, temp->getName());
-                // else if (code == ERR_INVITEONLYCHAN)
-                //  err(ERR_INVITEONLYCHAN, this->getHostname(), client, temp->getName());
+                else if (code == ERR_INVITEONLYCHAN)
+                    err(ERR_INVITEONLYCHAN, this->getHostname(), client, temp->getName());
                 else if (code == ERR_BADCHANNELKEY)
                     err(ERR_BADCHANNELKEY, this->getHostname(), client, temp->getName());
             }

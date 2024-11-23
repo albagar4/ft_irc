@@ -115,7 +115,7 @@ void initializeErrorMessages() {
 
     errorMessages[ERR_USERNOTINCHANNEL] = "They aren't on that channel";
     errorMessages[ERR_NOTONCHANNEL] = "You're not on that channel";
-    errorMessages[ERR_USERONCHANNEL] = "User is already on that channel";
+    errorMessages[ERR_USERONCHANNEL] = "is already on channel";
     errorMessages[ERR_NOLOGIN] = "User not logged in";
     errorMessages[ERR_SUMMONDISABLED] = "SUMMON has been disabled";
     errorMessages[ERR_USERSDISABLED] = "USERS has been disabled";

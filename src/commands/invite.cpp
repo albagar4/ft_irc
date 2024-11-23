@@ -20,11 +20,10 @@ void Server::parseInvite(std::string buffer, Client &client) {
             target_channel->addInvited(*target_client);
             std::string success_message = ":" + client.getHostname() + " INVITE " + target_client->getNick() + " :" + target_channel->getName() + "\r\n";
             target_client->setResponse(success_message);
-            success_message = "RPL_INVITING 341 :" + client.getHostname() + " INVITE " + target_client->getNick() + " :" + target_channel->getName() + "\r\n";
             client.setResponse(success_message);
         }
     }
-    catch (int error) {
+    catch (NUM error) {
         if (error == ERR_NEEDMOREPARAMS)
             err(ERR_NEEDMOREPARAMS, this->getHostname(), client);
         if (error == ERR_UNKNOWNCOMMAND)

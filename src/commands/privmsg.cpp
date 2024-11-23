@@ -25,9 +25,8 @@ void Server::parsePrivMsg(std::string buffer, Client &client) {
                 }
             }
             if (find == false) throw 404;
-            client.setResponse(":" + client.getHostname() + " PRIVMSG " + target + " " + message +
+            temp->updateClients(client, ":" + client.getHostname() + " PRIVMSG " + target + " " + message +
                                "\r\n");
-            temp->updateClients(client, client.getResponse());
         } else {
             if (target == "bot-as")
                 this->parseBot(message, client);
