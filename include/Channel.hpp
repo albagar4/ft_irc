@@ -50,6 +50,7 @@ class Channel {
 
     bool isClient(Client client) const;
     bool isOperator(Client client) const;
+    bool isInvited(Client client) const;
     void printClients();
     std::string getUserList() const;
     bool isEmpty() const;
