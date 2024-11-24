@@ -162,7 +162,7 @@ void Server::findCommand(std::string buffer, Client& client) {
     std::string title = buffer.substr(0, buffer.find(" "));
     if (client.getAuth() == false) {
         std::string commandArray[5] = {"CAP", "PASS", "NICK", "USER", "QUIT"};
-        for (int j = 0; j < 4; j++) {
+        for (int j = 0; j < 5; j++) {
             if (title == commandArray[j]) {
                 (this->*authentification[j])(fixSpaces(buffer), client);
                 return;
@@ -171,7 +171,7 @@ void Server::findCommand(std::string buffer, Client& client) {
     } else {
         std::string commandArray[9] = {"JOIN", "PART",    "KICK", "INVITE", "TOPIC",
                                        "MODE", "PRIVMSG", "QUIT", "NICK"};
-        for (int j = 0; j < 8; j++) {
+        for (int j = 0; j < 9; j++) {
             if (title == commandArray[j]) {
                 (this->*commands[j])(fixSpaces(buffer), client);
                 return;
