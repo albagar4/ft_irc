@@ -165,16 +165,16 @@ void Server::findCommand(std::string buffer, Client& client) {
         for (int j = 0; j < 4; j++) {
             if (title == commandArray[j]) {
                 (this->*authentification[j])(fixSpaces(buffer), client);
-                return ;
+                return;
             }
         }
     } else {
-        std::string commandArray[9] = {"JOIN",  "PART", "KICK",    "INVITE",
-                                       "TOPIC", "MODE", "PRIVMSG", "QUIT", "NICK"};
+        std::string commandArray[9] = {"JOIN", "PART",    "KICK", "INVITE", "TOPIC",
+                                       "MODE", "PRIVMSG", "QUIT", "NICK"};
         for (int j = 0; j < 8; j++) {
             if (title == commandArray[j]) {
                 (this->*commands[j])(fixSpaces(buffer), client);
-                return ;
+                return;
             }
         }
     }

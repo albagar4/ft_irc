@@ -40,7 +40,7 @@ class Channel {
     std::string getName() const;
     std::string getPassword() const;
     std::string getTopic() const;
-    std::vector<Client> getClients() const;
+    std::vector<Client> &getClients();
     std::vector<Client> getOperators() const;
     std::vector<Client> getInviteds() const;
     int getUserLimit() const;

@@ -60,7 +60,7 @@ void Channel::setServer(Server *server) { this->server = server; }
 std::string Channel::getName() const { return this->name; }
 std::string Channel::getPassword() const { return this->password; }
 std::string Channel::getTopic() const { return this->topic; }
-std::vector<Client> Channel::getClients() const { return this->clients; }
+std::vector<Client> &Channel::getClients() { return this->clients; }
 std::vector<Client> Channel::getOperators() const { return this->operators; }
 std::vector<Client> Channel::getInviteds() const { return this->invited; }
 int Channel::getUserLimit() const { return this->userLimit; }
@@ -123,6 +123,9 @@ bool Channel::isEmpty() const {
 void Channel::disconnectClient(Client &client) {
     for (size_t i = 0; i < this->clients.size(); i++) {
         if (this->clients[i].getFd() == client.getFd()) {
+            if (this->isOperator(client) == true) {
+                this->removeOperator(client);
+            }
             this->clients.erase(this->clients.begin() + i);
             return;
         }
