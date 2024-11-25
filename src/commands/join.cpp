@@ -55,6 +55,7 @@ void Server::parseJoin(std::string buffer, Client &client) {
                     topic = "";
                 }
                 nameKey = split(tokens[i], ' ');
+                if (nameKey[0][0] != '#') throw ERR_UNKNOWNCOMMAND;
                 if (isNewChannel(nameKey[0]) == true) {
                     Channel newChannel(nameKey[0], topic);
                     newChannel.addClient(client);
@@ -63,7 +64,7 @@ void Server::parseJoin(std::string buffer, Client &client) {
                 } else {
                     temp = this->findChannel(nameKey[0]);
                     if (temp->isClient(client)) break;
-                    if ((size_t)temp->getUserLimit() == temp->getClients().size())
+                    if (temp->getClients().size() >= (size_t)temp->getUserLimit())
                         throw ERR_CHANNELISFULL;
                     if (temp->getInviteOnly() == true && !temp->isInvited(client))
                         throw ERR_INVITEONLYCHAN;
@@ -87,6 +88,8 @@ void Server::parseJoin(std::string buffer, Client &client) {
                     err(ERR_INVITEONLYCHAN, this->getHostname(), client, temp->getName());
                 else if (code == ERR_BADCHANNELKEY)
                     err(ERR_BADCHANNELKEY, this->getHostname(), client, temp->getName());
+                else if (code == ERR_UNKNOWNCOMMAND)
+                    err(ERR_UNKNOWNCOMMAND, this->getHostname(), client, nameKey[0]);
             }
         }
     } catch (NUM code) {

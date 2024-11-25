@@ -138,7 +138,9 @@ void Server::manageUpdates(Client& client) {
 
     ssize_t bytes = recv(client.getFd(), buffer, sizeof(buffer) - 1, 0);
     if (bytes == -1) print_err("recv has failed");
-    if (bytes == 0) this->disconnectClient(client);
+    if (bytes == 0) {
+        this->disconnectClient(client);
+    }
     if (bytes > 0) {
         std::string message(buffer);
         if (message.find_first_of("\n") != std::string::npos) {
@@ -205,6 +207,12 @@ void Server::disconnectClient(Client& client) {
     Client temp = client;
     for (std::vector<pollfd>::iterator it = this->fds.begin(); it != this->fds.end(); it++) {
         if (temp.getFd() == it->fd) {
+            std::vector<Channel> channels = this->findUserChannels(client);
+            for (size_t i = 0; i < channels.size(); i++) {
+                channels[i].updateClients(
+                    client, ":" + client.getHostname() + " PART " + channels[i].getName() + "\r\n");
+                channels[i].disconnectClient(client);
+            }
             this->fds.erase(it);
             this->map.erase(temp.getFd());
             close(temp.getFd());

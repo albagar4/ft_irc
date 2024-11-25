@@ -58,7 +58,7 @@ void Server::parseTopic(std::string buffer, Client &client) {
     } catch (NUM code) {
         if (code == SUCCESS) {
             std::string response = rpl_Successful(client, *temp);
-            temp->updateClients(client, response);  // TODO: Test
+            temp->updateClients(client, response);
             client.setResponse(client.getResponse() + response);
         } else if (code == RPL_NOTOPIC)
             client.setResponse(client.getResponse() + rpl_NoTopic(*this, client, *temp));
