@@ -8,7 +8,7 @@ static char addMode(Channel &channel, char mode, std::vector<std::string> tokens
             channel.setInviteOnly(true);
             return mode;
         case 't':
-            channel.setOpTopicOnly(true);  // CHANGE TOPIC
+            channel.setOpTopicOnly(true);
             return mode;
         case 'k':
             if (tokens.size() != 3) throw ERR_NEEDMOREPARAMS;
