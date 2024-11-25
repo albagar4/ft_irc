@@ -32,6 +32,7 @@ class Channel {
     void addOperator(Client op);
     void addInvited(Client invited);
     void removeOperator(Client op);
+    void removeInvited(Client invited);
     void setUserLimit(int userLimit);
     void setInviteOnly(bool inviteOnly);
     void setOpTopicOnly(bool opTopicOnly);
