@@ -13,6 +13,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <csignal>
 #include <cstdio>
 #include <fstream>
 #include <iomanip>

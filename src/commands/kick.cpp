@@ -16,6 +16,7 @@ void Server::parseKick(std::string buffer, Client &client) {
             try {
                 clientToKick = this->findClient(names[i]);
                 if (!clientToKick) throw ERR_NOSUCHNICK;
+                if (client.getNick() == clientToKick->getNick()) throw ERR_UNKNOWN;
                 if (temp->isClient(*clientToKick)) {
                     temp->disconnectClient(*clientToKick);
                     throw SUCCESS;
@@ -35,6 +36,8 @@ void Server::parseKick(std::string buffer, Client &client) {
                 else if (code == ERR_USERNOTINCHANNEL)
                     err(ERR_USERNOTINCHANNEL, this->getHostname(), client,
                         names[i] + " " + temp->getName());
+                else if (code == ERR_UNKNOWN)
+                    err(ERR_UNKNOWN, this->getHostname(), client);
             }
         }
     } catch (NUM code) {
