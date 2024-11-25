@@ -52,6 +52,15 @@ void Channel::removeOperator(Client op) {
         }
     }
 }
+void Channel::removeInvited(Client invited) {
+    for (std::vector<Client>::iterator it = this->invited.begin(); it != this->invited.end();
+         it++) {
+        if (invited.getFd() == it->getFd()) {
+            this->invited.erase(it);
+            return;
+        }
+    }
+}
 void Channel::setUserLimit(int userLimit) { this->userLimit = userLimit; }
 void Channel::setInviteOnly(bool inviteOnly) { this->inviteOnly = inviteOnly; }
 void Channel::setOpTopicOnly(bool opTopicOnly) { this->opTopicOnly = opTopicOnly; }
