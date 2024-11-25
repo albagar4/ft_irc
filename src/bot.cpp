@@ -69,8 +69,6 @@ void Server::parseBot(std::string buffer, Client &client){
     std::string mode[3] = { ":HELP", ":PLAY", ":TIP"};
     unsigned long i;
 
-    ft_print("Inside Bot: ");
-    ft_print(buffer);
     for (i = 0; i < buffer.size(); i++) buffer[i] = toupper(buffer[i]);
     for (i = 0; i < 3; i++) if (buffer == mode[i]) break ;
     switch (i){
@@ -83,5 +81,4 @@ void Server::parseBot(std::string buffer, Client &client){
         default:
                 client.setResponse(":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :Invalid command. Ask me 'HELP' for more info\r\n");
     }
-    std::cout << client.getResponse() << std::endl;
 }
