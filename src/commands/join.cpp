@@ -68,13 +68,14 @@ void Server::parseJoin(std::string buffer, Client &client) {
                         throw ERR_CHANNELISFULL;
                     if (temp->getInviteOnly() == true && !temp->isInvited(client))
                         throw ERR_INVITEONLYCHAN;
-                    if (!temp->getPassword().empty()) {
+                    if (!temp->isInvited(client) && !temp->getPassword().empty()) {
                         if (nameKey.size() > 1) {
                             if (nameKey[1] != temp->getPassword()) throw ERR_BADCHANNELKEY;
                         } else
                             throw ERR_BADCHANNELKEY;
                     }
                     temp->addClient(client);
+                    temp->removeInvited(client);
                 }
                 throw SUCCESS;
             } catch (NUM code) {

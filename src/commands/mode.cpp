@@ -36,7 +36,8 @@ static char addMode(Channel &channel, char mode, std::vector<std::string> tokens
             return 0;
     }
 }
-static char removeMode(Channel &channel, char mode, std::vector<std::string> tokens) {
+static char removeMode(Client &client, Channel &channel, char mode,
+                       std::vector<std::string> tokens) {
     switch (mode) {
         case 'i':
             channel.setInviteOnly(false);
@@ -53,6 +54,7 @@ static char removeMode(Channel &channel, char mode, std::vector<std::string> tok
             std::vector<Client>::iterator it = operators.begin();
             for (; it != operators.end(); it++) {
                 if (it->getNick() == tokens[2]) {
+                    if (client.getNick() == it->getNick()) throw ERR_UNKNOWNMODE;
                     channel.removeOperator(*it);
                     return mode;
                 }
@@ -91,7 +93,7 @@ void Server::parseMode(std::string buffer, Client &client) {
                 if (tokens[1][i] == '-') {
                     successfulModes = '-';
                     while (++i < tokens[1].size() && tokens[1][i] != '+')
-                        successfulModes += removeMode(*tempChannel, tokens[1][i], tokens);
+                        successfulModes += removeMode(client, *tempChannel, tokens[1][i], tokens);
                 }
             }
             throw SUCCESS;

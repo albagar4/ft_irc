@@ -206,6 +206,15 @@ void Server::disconnectClient(Client& client) {
                 channels[i].updateClients(
                     client, ":" + client.getHostname() + " PART " + channels[i].getName() + "\r\n");
                 channels[i].disconnectClient(client);
+                if (channels[i].getOperators().empty() && !channels[i].getClients().empty()) {
+                    std::vector<Client>& clients = channels[i].getClients();
+                    Client& newOperator = clients[0];
+                    channels[i].addOperator(newOperator);
+                    channels[i].updateClients(client, newOperator.getResponse() + ":" +
+                                                          this->hostname + " MODE " +
+                                                          channels[i].getName() + " +o " +
+                                                          newOperator.getNick() + "\r\n");
+                }
             }
             this->fds.erase(it);
             this->map.erase(temp.getFd());
