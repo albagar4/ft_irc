@@ -7,7 +7,7 @@
     Atraves del PRIVMSG, el buffer será = DCC SEND <fn> <host> <port>
     A lo mejor, en vex de un vector con el nombre de los ficheros, hago un map con la ruta y el nombre del fichero
     Yo debería mandar un NOTICE <target> :Aceptar o ignorar la transferencia
-    El remitente deberia de ser algo como PRIVMSG <target>:DCC ACCEPT <filename> <path> o DCC IGNORE
+    El remitente deberia de ser algo como PRIVMSG <target>:DCC GET <filename> <path> o DCC IGNORE
 */
 static  std::string itoa(int number){
     std::stringstream   str;
@@ -63,21 +63,21 @@ void    Server::receiveFile(std::vector<std::string> arguments, Client &receiver
                 outFile << inFile.rdbuf();
             else throw 400 ;
             this->files.erase(this->files.begin() + i);
-            receiver.setResponse(":NOTICE: file " + arguments[2] + " downloading\r\n");
-            sender.setResponse(":NOTICE: DCC SEND accepted by " + receiver.getNick() + "\r\n");
+            receiver.setResponse(":" + sender.getHostname() + " NOTICE " + receiver.getNick() + " :file " + arguments[2] + " downloading.\r\n");
+            sender.setResponse(":" + receiver.getHostname() + " NOTICE " + sender.getNick() + " :DCC SEND accepted by " + receiver.getNick() + ".\r\n");
         }
 
     }catch(int code){
         if (code == 461)
-            receiver.setResponse(":" + receiver.getHostname() + " DDC ACCEPT :Not enough parameters.");
+            receiver.setResponse(":" + receiver.getHostname() + " DDC GET :Not enough parameters.\r\n");
         if (code == 106)
-            receiver.setResponse(":" + receiver.getHostname() + " DDC ACCEPT :Extra parameters.\r\n");
+            receiver.setResponse(":" + receiver.getHostname() + " DDC GET :Extra parameters.\r\n");
         if (code == 107)
-            receiver.setResponse(":" + receiver.getHostname() + " DDC ACCEPT :No such file on server.\r\n");
+            receiver.setResponse(":" + receiver.getHostname() + " DDC GET :No such file on server.\r\n");
         if (code == 108)
-            receiver.setResponse(":" + receiver.getHostname() + " DDC ACCEPT :Permission Denied\r\n");
+            receiver.setResponse(":" + receiver.getHostname() + " DDC GET :Permission Denied\r\n");
         if (code == 400)
-            receiver.setResponse(":" + receiver.getHostname() + " DCC ACCEPT: An error happened while doing the file transfer\r\n");
+            receiver.setResponse(":" + receiver.getHostname() + " DCC GET: An error happened while doing the file transfer\r\n");
     }
 }
 
@@ -93,14 +93,14 @@ void Server::sendFile(std::vector<std::string> arguments, Client &sender, Client
             if (arguments[3].compare(receiver.getHostname()) != 0) throw 104;
             if (arguments[4].compare(itoa(this->port)) != 0) throw 105;
             this->files.push_back(getFile(arguments[2], sender.getNick(), receiver.getNick()));
-            receiver.setResponse(":NOTICE: " + sender.getNick() + " wants to send you a file: " + aux + ".\nPRIVMSG user whit 'DCC ACCEPT <filename> <path to download file>' to get the file or 'DCC IGNORE' to decline.\r\n");
-            sender.setResponse(":NOTICE: DCC SEND rejected by " + receiver.getNick() + "\r\n");
+            receiver.setResponse(":" + sender.getHostname() + " NOTICE " + receiver.getNick() + " :" + sender.getNick() + " wants to send you a file: " + aux + ".\r\nPRIVMSG user whit 'DCC GET <filename> <path to download file>' to get the file or 'DCC IGNORE' to decline.\r\n");
+            sender.setResponse(":" + receiver.getHostname() + " NOTICE " + sender.getNick() + " :" + receiver.getNick() + " has received your request.\r\n");
         }
     } catch (int code){
         if (code == 106)
             sender.setResponse(":" + sender.getHostname() + " DDC SEND :Extra parameters.\r\n");
         if (code == 461)
-            sender.setResponse(":" + sender.getHostname() + " DDC SEND :Not enough parameters.");
+            sender.setResponse(":" + sender.getHostname() + " DDC SEND :Not enough parameters.\r\n");
         if (code == 101)
             sender.setResponse(":" + sender.getHostname() + " DDC SEND :No such file.\r\n");
         if (code == 102)
@@ -116,21 +116,20 @@ void Server::sendFile(std::vector<std::string> arguments, Client &sender, Client
 
 void    Server::parseFileTransfer(std::string buffer, Client &sender, Client &receiver){
     std::vector<std::string> arguments = split(buffer, ' ');
-    std::string mode[4] = { "HELP", "SEND", "ACCEPT", "IGNORE"};
+    std::string mode[4] = { "HELP", "SEND", "GET", "IGNORE"};
     unsigned int    i;
 
-    std::cout << "Inside File Transfer: " << arguments[1] << std::endl;
     for (i = 0; i < arguments[1].size(); i++) if (arguments[1] == mode[i]) break ;
     switch (i){
         case 0:
-            sender.setResponse(":" + sender.getHostname() + " NOTICE " + sender.getNick() + " :DCC <MODE> --SEND <filename> <host> <port> --ACCEPT <filename> <path to download file>  --IGNORE\r\n"); break ;
+            sender.setResponse(":" + sender.getHostname() + " NOTICE " + sender.getNick() + " :DCC <MODE>\r\n--SEND <filename> <host> <port>\r\n--GET <filename> <path to download file>\r\n--IGNORE\r\n"); break ;
         case 1:
             sendFile(arguments, sender, receiver); break ;
         case 2:
             receiveFile(arguments, sender, receiver); break ;
         case 3:
-            receiver.setResponse(":" + sender.getHostname() + " NOTICE " + sender.getNick() + " :DCC SEND rejected by " + receiver.getNick() + "\r\n");
-            sender.setResponse(":" + sender.getHostname() + " NOTICE " + sender.getNick() + " :NOTICE : You reject " + receiver.getNick() + "'s file\r\n");
+            receiver.setResponse(":" + sender.getHostname() + " NOTICE " + receiver.getNick() + " :DCC SEND rejected by " + sender.getNick() + "\r\n");
+            sender.setResponse(":" + receiver.getHostname() + " NOTICE " + sender.getNick() + " : You reject " + receiver.getNick() + "'s file\r\n");
             break ;
         default:
             sender.setResponse(":" + sender.getHostname() + " DCC " + arguments[1] + " :Unknown command.\r\n");

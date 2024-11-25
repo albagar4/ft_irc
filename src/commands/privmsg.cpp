@@ -34,7 +34,7 @@ void Server::parsePrivMsg(std::string buffer, Client &client) {
                 aux = this->findClient(target);
                 if (!aux) throw 401;
                 if (message.substr(1, 3).compare("DCC") == 0)
-                    parseFileTransfer(message, client, *aux);
+                    parseFileTransfer(message.substr(1), client, *aux);
                 else {
                     aux->setResponse(":" + client.getHostname() + " PRIVMSG " + target + " " +
                                      message + "\r\n");
