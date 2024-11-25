@@ -119,20 +119,21 @@ void    Server::parseFileTransfer(std::string buffer, Client &sender, Client &re
     std::string mode[4] = { "HELP", "SEND", "ACCEPT", "IGNORE"};
     unsigned int    i;
 
+    std::cout << "Inside File Transfer: " << arguments[1] << std::endl;
     for (i = 0; i < arguments[1].size(); i++) if (arguments[1] == mode[i]) break ;
     switch (i){
         case 0:
-            sender.setResponse(":NOTICE: DCC <MODE>\n--SEND <filename> <host> <port>\n--ACCEPT <filename> <path to download file>\n--IGNORE\r\n"); break ;
+            sender.setResponse(":" + sender.getHostname() + " NOTICE " + sender.getNick() + " :DCC <MODE> --SEND <filename> <host> <port> --ACCEPT <filename> <path to download file>  --IGNORE\r\n"); break ;
         case 1:
-            sendFile(arguments, sender, receiver);
+            sendFile(arguments, sender, receiver); break ;
         case 2:
-            receiveFile(arguments, sender, receiver);
+            receiveFile(arguments, sender, receiver); break ;
         case 3:
-            receiver.setResponse(":NOTICE: DCC SEND rejected by " + receiver.getNick() + "\r\n");
-            sender.setResponse(":NOTICE : You reject " + receiver.getNick() + "'s file\r\n");
+            receiver.setResponse(":" + sender.getHostname() + " NOTICE " + sender.getNick() + " :DCC SEND rejected by " + receiver.getNick() + "\r\n");
+            sender.setResponse(":" + sender.getHostname() + " NOTICE " + sender.getNick() + " :NOTICE : You reject " + receiver.getNick() + "'s file\r\n");
             break ;
         default:
-            sender.setResponse(":" + sender.getHostname() + "DCC " + arguments[1] + " :Unknown command.\r\n");
+            sender.setResponse(":" + sender.getHostname() + " DCC " + arguments[1] + " :Unknown command.\r\n");
     }
     std::cout << sender.getResponse() << std::endl;
 }

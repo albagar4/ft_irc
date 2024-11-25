@@ -3,29 +3,33 @@
 #include <ircserv.hpp>
 #include <Channel.hpp>
 
+static std::string itoa(int number) {
+    std::stringstream ss;
+    ss << number;
+    return ss.str();
+}
+
 static void botPlay(Client &client){
-    std::string message = ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :Welcome to Russian Roulette!\n";
-    std::string itoa = "";
+    std::string message = ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :Welcome to Russian Roulette!\r\n";
     int player;
     int bot;
     
     srand(time(NULL));
     for (int i = 6; i > 1; i--){
-        itoa[0] = (i % 10) + '0';
-        message += "You have a 1 in " + itoa + " chance of dying. Let's spin the gun chamber...\n";
+        message += ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :You have a 1 in " + itoa(i) + " chance of dying. Let's spin the gun chamber...\r\n";
         player = rand() % i + 1;
         bot = rand() % i + 1;
-        if (player == 1) message += client.getNick() + " pulled the trigger and... *BANG*! You're dead! XP\n";
-        else message += client.getNick() + " pulled the trigger and... *click*! You're safe... for now.\n";
-        if (bot == 1) message += "bot-as pulled the trigger and... *BANG*! bot-as is dead! XP\n";
-        else message += "bot-as pulled the trigger and... *click*! He's safe... for now.\n";
-        if (bot == 0 && player == 0) message += "Both of you are safe. Let's play again until the bullets run out or one of you dies! :)\n";
+        if (player == 1) message += ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :" + client.getNick() + " pulled the trigger and... *BANG*! You're dead! XP\r\n";
+        else message += ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :" + client.getNick() + " pulled the trigger and... *click*! You're safe... for now.\r\n";
+        if (bot == 1) message += ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :bot-as pulled the trigger and... *BANG*! bot-as is dead! XP\r\n";
+        else message += ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :bot-as pulled the trigger and... *click*! He's safe... for now.\r\n";
+        if (bot == 0 && player == 0) message += ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :Both of you are safe. Let's play again until the bullets run out or one of you dies! :)\r\n";
         if (bot == 1 || player == 1) break ;
     }
-    if (bot == 1 && player != 1) message += client.getNick() + " wins! Congratulations! :)\n\r";
-    else if (bot != 1 && player == 1) message += "bot-as wins! Better luck next time! :)\n\r";
-    else if (bot != 1 && player != 1) message += "Both survived! Aw ! That's not fun... :(\n\r";
-    else if (bot == 1 && player == 1) message += "Both of you died! That's a tie! :)\n\r";
+    if (bot == 1 && player != 1) message += ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :" + client.getNick() + " wins! Congratulations! :)\r\n";
+    else if (bot != 1 && player == 1) message += ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :bot-as wins! Better luck next time! :)\r\n";
+    else if (bot != 1 && player != 1) message += ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :Both survived! Aw ! That's not fun... :(\r\n";
+    else if (bot == 1 && player == 1) message += ":bot-as!GatoConBot-as@localhost PRIVMSG " + client.getNick() + " :Both of you died! That's a tie! :)\r\n";
     client.setResponse(message);
 }
 
@@ -49,7 +53,7 @@ static void botTip(Client &client){
         case 6:
             message += "Remember, it's never too late to give up on your dreams and take a nap instead.\r\n"; break ;
         case 7:
-            message += "You're the reason 'Ctrl+Z' was invented."; break ;
+            message += "You're the reason 'Ctrl+Z' was invented.\r\n"; break ;
         case 8:
             message += "Think positive! You tried your best… and it still wasn't great, but hey, points for effort!\r\n"; break ;
         case 9:
