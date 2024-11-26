@@ -4,7 +4,7 @@ NAME = ircserv
 INCLUDE = include/
 SRC_DIR = src/
 OBJ_DIR = obj/
-CC = clang++
+CC = c++
 CFLAGS = -Wall -Werror -Wextra -std=c++98 -g
 AR = ar rcs
 
