@@ -19,7 +19,8 @@ void Server::parseInvite(std::string buffer, Client &client) {
             if (target_channel->isOperator(client) == false) throw ERR_CHANOPRIVSNEEDED;
             if (target_channel->isClient(*target_client) == true) throw ERR_USERONCHANNEL;
 
-            target_channel->addInvited(*target_client);
+            if (!target_channel->isInvited(client))
+                target_channel->addInvited(*target_client);
             std::string success_message = ":" + client.getHostname() + " INVITE " +
                                           target_client->getNick() + " :" +
                                           target_channel->getName() + "\r\n";
