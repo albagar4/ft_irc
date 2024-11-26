@@ -197,6 +197,17 @@ void Server::parseCommands(std::string buff, Client& client) {
     }
 }
 
+void Server::removeAllInvited(Client& client) {
+    std::vector<Channel>::iterator it = this->getChannels().begin();
+    for (; it != channels.end(); it++) {
+        std::vector<Client> invitedClients = it->getInviteds();
+        std::vector<Client>::iterator itClients = invitedClients.begin();
+        for (; itClients != invitedClients.end(); itClients++) {
+            if (itClients->getFd() == client.getFd()) it->removeInvited(client);
+        }
+    }
+}
+
 void Server::disconnectClient(Client& client) {
     Client temp = client;
     for (std::vector<pollfd>::iterator it = this->fds.begin(); it != this->fds.end(); it++) {
@@ -205,9 +216,8 @@ void Server::disconnectClient(Client& client) {
             for (size_t i = 0; i < channels.size(); i++) {
                 channels[i]->updateClients(
                     temp, ":" + temp.getHostname() + " PART " + channels[i]->getName() + "\r\n");
+                channels[i]->removeInvited(client);
                 channels[i]->disconnectClient(client);
-                std::vector<Client> clients = channels[i]->getClients();
-                std::cout << clients.size() << std::endl;
                 if (channels[i]->isEmpty()) this->closeChannel(*channels[i]);
                 if (channels[i]->getOperators().empty() && !channels[i]->getClients().empty()) {
                     std::vector<Client>& clients = channels[i]->getClients();
@@ -218,6 +228,7 @@ void Server::disconnectClient(Client& client) {
                                   channels[i]->getName() + " +o " + newOperator.getNick() + "\r\n");
                 }
             }
+            this->removeAllInvited(client);
             this->fds.erase(it);
             this->map.erase(temp.getFd());
             close(temp.getFd());

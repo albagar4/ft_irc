@@ -65,6 +65,7 @@ class Server {
     Client *findClient(std::string name);
     void closeChannel(Channel channel);
     std::vector<Channel *> findUserChannels(Client &client);
+    void removeAllInvited(Client &client);
     // Commands
     void findCommand(std::string buffer, Client &client);
     void sendResponse();

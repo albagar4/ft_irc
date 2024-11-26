@@ -27,10 +27,13 @@ static char addMode(Channel &channel, char mode, std::vector<std::string> tokens
             throw ERR_USERNOTINCHANNEL;
             return 0;
         }
-        case 'l':
+        case 'l': {
             if (tokens.size() != 3) throw ERR_NEEDMOREPARAMS;
-            channel.setUserLimit(atoi(tokens[2].c_str()));
+            int userLimit = atoi(tokens[2].c_str());
+            if (userLimit < 1 || userLimit > 99) throw ERR_UNKNOWNMODE;
+            channel.setUserLimit(userLimit);
             return mode;
+        }
         default:
             throw ERR_UNKNOWNMODE;
             return 0;
@@ -89,11 +92,12 @@ void Server::parseMode(std::string buffer, Client &client) {
                     successfulModes = '+';
                     while (++i < tokens[1].size() && tokens[1][i] != '-')
                         successfulModes += addMode(*tempChannel, tokens[1][i], tokens);
-                }
-                if (tokens[1][i] == '-') {
+                } else if (tokens[1][i] == '-') {
                     successfulModes = '-';
                     while (++i < tokens[1].size() && tokens[1][i] != '+')
                         successfulModes += removeMode(client, *tempChannel, tokens[1][i], tokens);
+                } else {
+                    throw ERR_UNKNOWNMODE;
                 }
             }
             throw SUCCESS;
