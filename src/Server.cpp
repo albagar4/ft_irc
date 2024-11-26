@@ -136,7 +136,6 @@ void Server::manageUpdates(Client& client) {
         this->disconnectClient(client);
     }
     if (bytes > 0) {
-        std::cout << "." << buffer << "." << std::endl;
         std::string message(buffer);
         if (message.find_first_of("\n") != std::string::npos) {
             client.setIncomingMessage(client.getIncomingMessage() + message);
