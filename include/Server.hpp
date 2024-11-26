@@ -46,7 +46,7 @@ class Server {
     std::string getHostname() const;
     std::map<int, Client> &getMap(void);
     std::vector<File> getFiles(void) const;
-    std::vector<Channel> getChannels() const;
+    std::vector<Channel> &getChannels();
 
     void printChannels();
     // Setters
@@ -64,7 +64,7 @@ class Server {
     Channel *findChannel(std::string name);
     Client *findClient(std::string name);
     void closeChannel(Channel channel);
-    std::vector<Channel> findUserChannels(Client &client);
+    std::vector<Channel *> findUserChannels(Client &client);
     // Commands
     void findCommand(std::string buffer, Client &client);
     void sendResponse();
