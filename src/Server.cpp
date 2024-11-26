@@ -136,6 +136,7 @@ void Server::manageUpdates(Client& client) {
         this->disconnectClient(client);
     }
     if (bytes > 0) {
+        std::cout << "." << buffer << "." << std::endl;
         std::string message(buffer);
         if (message.find_first_of("\n") != std::string::npos) {
             client.setIncomingMessage(client.getIncomingMessage() + message);
@@ -206,6 +207,7 @@ void Server::disconnectClient(Client& client) {
                 channels[i].updateClients(
                     client, ":" + client.getHostname() + " PART " + channels[i].getName() + "\r\n");
                 channels[i].disconnectClient(client);
+                if (channels[i].isEmpty()) this->closeChannel(channels[i]);
                 if (channels[i].getOperators().empty() && !channels[i].getClients().empty()) {
                     std::vector<Client>& clients = channels[i].getClients();
                     Client& newOperator = clients[0];
@@ -220,6 +222,7 @@ void Server::disconnectClient(Client& client) {
             this->map.erase(temp.getFd());
             close(temp.getFd());
             printDisconnected(temp);
+            sendResponse();
             break;
         }
     }
