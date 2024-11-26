@@ -33,6 +33,7 @@
 #define CYAN "\033[36m"    /* Cyan */
 #define WHITE "\033[37m"   /* White */
 
+extern int g_signal;
 enum NUM {
     SUCCESS = 0,
     RPL_CHANNELMODEIS = 324,

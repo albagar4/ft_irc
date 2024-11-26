@@ -89,7 +89,7 @@ std::vector<Channel> Server::getChannels() const { return (this->channels); }
 
 int Server::checkConnections(void) {
     int result = poll(&this->fds[0], fds.size(), 0);
-    if (result == -1) print_err("Error while trying to poll()");
+    if (result == -1 && !g_signal) print_err("Error while trying to poll()");
     return (result);
 }
 
