@@ -85,7 +85,7 @@ std::string Server::getHostname() const { return (this->hostname); }
 std::string Server::getPassword(void) const { return (this->password); }
 std::map<int, Client>& Server::getMap(void) { return (this->map); }
 std::vector<File> Server::getFiles(void) const { return (this->files); }
-std::vector<Channel> Server::getChannels() const { return (this->channels); }
+std::vector<Channel>& Server::getChannels() { return (this->channels); }
 
 int Server::checkConnections(void) {
     int result = poll(&this->fds[0], fds.size(), 0);
@@ -201,20 +201,21 @@ void Server::disconnectClient(Client& client) {
     Client temp = client;
     for (std::vector<pollfd>::iterator it = this->fds.begin(); it != this->fds.end(); it++) {
         if (temp.getFd() == it->fd) {
-            std::vector<Channel> channels = this->findUserChannels(client);
+            std::vector<Channel*> channels = this->findUserChannels(temp);
             for (size_t i = 0; i < channels.size(); i++) {
-                channels[i].updateClients(
-                    client, ":" + client.getHostname() + " PART " + channels[i].getName() + "\r\n");
-                channels[i].disconnectClient(client);
-                if (channels[i].isEmpty()) this->closeChannel(channels[i]);
-                if (channels[i].getOperators().empty() && !channels[i].getClients().empty()) {
-                    std::vector<Client>& clients = channels[i].getClients();
+                channels[i]->updateClients(
+                    temp, ":" + temp.getHostname() + " PART " + channels[i]->getName() + "\r\n");
+                channels[i]->disconnectClient(client);
+                std::vector<Client> clients = channels[i]->getClients();
+                std::cout << clients.size() << std::endl;
+                if (channels[i]->isEmpty()) this->closeChannel(*channels[i]);
+                if (channels[i]->getOperators().empty() && !channels[i]->getClients().empty()) {
+                    std::vector<Client>& clients = channels[i]->getClients();
                     Client& newOperator = clients[0];
-                    channels[i].addOperator(newOperator);
-                    channels[i].updateClients(client, newOperator.getResponse() + ":" +
-                                                          this->hostname + " MODE " +
-                                                          channels[i].getName() + " +o " +
-                                                          newOperator.getNick() + "\r\n");
+                    channels[i]->addOperator(newOperator);
+                    channels[i]->updateClients(
+                        temp, newOperator.getResponse() + ":" + this->hostname + " MODE " +
+                                  channels[i]->getName() + " +o " + newOperator.getNick() + "\r\n");
                 }
             }
             this->fds.erase(it);
@@ -264,12 +265,12 @@ void Server::closeChannel(Channel channel) {
         }
     }
 }
-std::vector<Channel> Server::findUserChannels(Client& client) {
-    std::vector<Channel> activeChannels;
-    std::vector<Channel> channels = this->getChannels();
+std::vector<Channel*> Server::findUserChannels(Client& client) {
+    std::vector<Channel*> activeChannels;
+    std::vector<Channel>& channels = this->getChannels();
     std::vector<Channel>::iterator it = channels.begin();
     for (; it != channels.end(); it++) {
-        if (it->isClient(client)) activeChannels.push_back(*it);
+        if (it->isClient(client)) activeChannels.push_back(&(*it));
     }
     return activeChannels;
 }
