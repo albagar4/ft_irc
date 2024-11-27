@@ -1,14 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fileTransfer.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: albagar4 <albagar4@student.42malaga.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/27 11:30:14 by albagar4          #+#    #+#             */
+/*   Updated: 2024/11/27 11:30:14 by albagar4         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <File.hpp>
 #include <Server.hpp>
-/* PRIVMSG <client> :DCC SEND <filename> <host> <port> (<tamaño>)
-    <filename>: nombre del archivo; <host>: IP pública del remitente; <port>: puerto del remitente.
-    Hay dos partes: el usuario que intenta mandar el fichero, y el que lo recibe.
-    El usuario que recibe debe recibir una request para acpetar o ignorar la transferencia.
-    Atraves del PRIVMSG, el buffer será = DCC SEND <fn> <host> <port>
-    A lo mejor, en vex de un vector con el nombre de los ficheros, hago un map con la ruta y el nombre del fichero
-    Yo debería mandar un NOTICE <target> :Aceptar o ignorar la transferencia
-    El remitente deberia de ser algo como PRIVMSG <target>:DCC ACCEPT <filename> <path> o DCC IGNORE
-*/
+
 static  std::string itoa(int number){
     std::stringstream   str;
     
