@@ -25,7 +25,8 @@ void Server::parsePass(std::string buffer, Client &client) {
 
         std::stringstream ss;
         ss << client.getRetries();
-        msg += "Nbr of retries left: " + ss.str() + "\r\n";
+        msg = "Nbr of retries left: " + ss.str() + "\r\n";
+        client.setResponse(client.getResponse() + msg);
     }
 
     if (client.getRetries() == 0) {
