@@ -1,6 +1,6 @@
 <div align="center">
-    <img src="https://github.com/15Galan/42_project-readmes/blob/master/banners/cursus/projects/ft_irc-light.png?raw=true#gh-light-mode-only" alt="Banner (claro)" />
-    <img src="https://github.com/15Galan/42_project-readmes/blob/master/banners/cursus/projects/ft_irc-dark.png?raw=true#gh-dark-mode-only" alt="Banner (oscuro)" />
+    <img src="https://github.com/15Galan/42_project-readmes/blob/master/banners/cursus/projects/ft-irc-light.png?raw=true#gh-light-mode-only" alt="Banner (claro)" />
+    <img src="https://github.com/15Galan/42_project-readmes/blob/master/banners/cursus/projects/ft-irc-dark.png?raw=true#gh-dark-mode-only" alt="Banner (oscuro)" />
     <br>
   This project is about recreating your own IRC server. You will use an actual IRC client to connect to your server and test it.
   Internet is ruled by solid standars protocols that allow connected computers to interact with each other.
