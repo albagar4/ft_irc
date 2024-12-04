@@ -38,7 +38,7 @@
   </tr>
   <tr>
     <th>Turn in files</th>
-    <td><code>Makefile, *.{h, hpp}, *.cpp, *.tpp, *.ipp, an optional configuration file</code></td>
+    <td><code>Makefile, *.{h, hpp}, *.cpp, *.tpp, *.ipp</code>, an optional configuration file</td>
   </tr>
   <tr>
     <th>Makefile</th>
@@ -52,9 +52,7 @@
     <th>External functions</th>
     <td>
       Everything in C++ 98<br>
-      <code>
-socket, close, setsockopt, getsockname, getprotobyname, gethostbyname, getaddrinfo, freeaddrinfo, bind, connect, listen, accept, htons, htonl, ntohs, ntohl, inet_addr, inet_ntoa, send, recv, signal, sigaction, lseek, fstat, fcntl, poll (or equivalent)
-    </code>
+      <code> socket, close, setsockopt, getsockname, getprotobyname, gethostbyname, getaddrinfo, freeaddrinfo, bind, connect, listen, accept, htons, htonl, ntohs, ntohl, inet_addr, inet_ntoa, send, recv, signal, sigaction, lseek, fstat, fcntl, poll (or equivalent) </code>
 	</td>
   </tr>
   <tr>
