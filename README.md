@@ -7,7 +7,7 @@
   It's always a good thing to know.
     <br>
 	<table>
-	<tr><th>Albagar4 (Authentification, server initialization)</th>
+	<tr><th>Albagar4 (Authentication, server initialization)</th>
 		<td><a href='https://profile.intra.42.fr/users/albagar4' target="_blank">
         <img alt='42 (oscuro)' src='https://img.shields.io/badge/Málaga-black?style=flat&logo=42&logoColor=white'/></td>
 	</tr>
